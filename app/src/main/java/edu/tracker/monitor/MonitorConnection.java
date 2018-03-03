@@ -4,7 +4,8 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import edu.tracker.monitor.screen.PhoneScreenData;
+import edu.tracker.data.Database;
+import edu.tracker.monitor.screen.ScreenData;
 
 /**
  * Created by Tobi on 26/02/2018.
@@ -33,8 +34,8 @@ public class MonitorConnection implements ServiceConnection {
         return service;
     }
 
-    public PhoneScreenData getScreenData() {
-        return service.getListener().getData();
+    public Database getDatabase() {
+        return service.getDatabase();
     }
 
     @Override

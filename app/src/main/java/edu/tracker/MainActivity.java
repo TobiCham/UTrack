@@ -7,9 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import edu.tracker.data.ScreenDataType;
 import edu.tracker.monitor.MonitorConnection;
 import edu.tracker.monitor.MonitorService;
-import edu.tracker.monitor.screen.PhoneScreenData;
+import edu.tracker.monitor.screen.ScreenData;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,14 +41,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateUnlocks() {
         if(monitorConnection.isConnected()) {
-            PhoneScreenData data = monitorConnection.getScreenData();
-            String text = "Unlocks: " + data.getUnlocks() + ", Screen Ons: " + data.getScreenOn() + ", Screen Offs: " + data.getScreenOff();
-            ((TextView) findViewById(R.id.dataText)).setText(text);
+            Map<ScreenDataType, Integer> map = monitorConnection.getDatabase().getTableScreen().getScreenCounts();
+            List<ScreenDataType> sortedTypes = new ArrayList<>(map.keySet());
+            Collections.sort(sortedTypes, (t1, t2) -> t1.getFriendlyName().compareTo(t2.getFriendlyName()));
+
+            StringBuilder builder = new StringBuilder();
+            for(int i = 0; i < sortedTypes.size(); i++) {
+                if(i != 0) builder.append(", ");
+                builder.append(sortedTypes.get(i).getFriendlyName()).append(": ").append(map.get(sortedTypes.get(i)));
+            }
+            monitorConnection.getDatabase().getTableScreen().getAllData();
+            ((TextView) findViewById(R.id.dataText)).setText(builder.toString());
         }
     }
 
     public void clearButtonClick(View view) {
-        monitorConnection.getScreenData().reset();
+        monitorConnection.getDatabase().getTableScreen().clearTable();
         updateUnlocks();
     }
 

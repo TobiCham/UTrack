@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".monitor.MonitorService" android:exported="false"/>
-
+        <service android:name=".monitor.MonitorService" android:exported="false" android:stopWithTask="false"/>
     </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest>

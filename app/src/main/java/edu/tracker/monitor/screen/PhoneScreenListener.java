@@ -5,29 +5,26 @@ import android.content.Context;
 import android.content.Intent;
 
 import edu.tracker.MainActivity;
-
-import static android.content.Intent.*;
+import edu.tracker.data.ScreenDataType;
+import edu.tracker.data.ScreenTable;
+import edu.tracker.monitor.MonitorService;
 
 public class PhoneScreenListener extends BroadcastReceiver {
 
-    private PhoneScreenData data;
+    private MonitorService service;
 
-    public PhoneScreenListener() {
-        data = new PhoneScreenData();
+    public PhoneScreenListener(MonitorService service) {
+        this.service = service;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        if(action.equals(ACTION_USER_PRESENT)) data.addUnlock();
-        if(action.equals(ACTION_SCREEN_ON)) data.addScreenOn();
-        if(action.equals(ACTION_SCREEN_OFF)) data.addScreenOff();
+        ScreenDataType type = ScreenDataType.getByIntentAction(action);
+        if(type == null) return; //This shouldn't happen
 
+        service.getDatabase().getTableScreen().insertData(new ScreenData(type));
         if(context instanceof MainActivity) ((MainActivity) context).updateUnlocks();
-    }
-
-    public PhoneScreenData getData() {
-        return data;
     }
 }

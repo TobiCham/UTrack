@@ -6,7 +6,13 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.tracker.data.Database;
+import edu.tracker.data.ScreenDataType;
 import edu.tracker.monitor.screen.PhoneScreenListener;
+import edu.tracker.monitor.screen.ScreenData;
 
 /**
  * Created by Tobi on 26/02/2018.
@@ -16,6 +22,9 @@ public class MonitorService extends Service {
 
     private PhoneScreenListener listener;
     private Binder binder = new Binder();
+    private Database database;
+
+    private Thread saveThread;
 
     @Nullable
     @Override
@@ -25,16 +34,31 @@ public class MonitorService extends Service {
 
     @Override
     public void onCreate() {
+        database = new Database(this);
+        database.getWritableDatabase(); //Open db
+
         if(listener == null) {
-            listener = new PhoneScreenListener();
+            listener = new PhoneScreenListener(this);
 
             IntentFilter filter = new IntentFilter();
-            filter.addAction(Intent.ACTION_SCREEN_ON);
-            filter.addAction(Intent.ACTION_SCREEN_OFF);
-            filter.addAction(Intent.ACTION_USER_PRESENT);
+            for(ScreenDataType type : ScreenDataType.values()) filter.addAction(type.getIntentAction());
 
             registerReceiver(listener, filter);
         }
+        saveThread = new Thread(() -> {
+            while(true) {
+                saveData();
+                try {
+                    Thread.sleep(30_000);
+                } catch (InterruptedException e) {
+                    //Thread has been interrupted, stop saving
+                    break;
+                }
+            }
+            saveData();
+            database.close();
+        });
+        saveThread.start();
     }
 
     @Override
@@ -42,6 +66,15 @@ public class MonitorService extends Service {
         //TODO Save data
         unregisterReceiver(listener);
         listener = null;
+        saveThread.interrupt();
+    }
+
+    private void saveData() {
+        database.getTableScreen().saveCache();
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 
     public PhoneScreenListener getListener() {
