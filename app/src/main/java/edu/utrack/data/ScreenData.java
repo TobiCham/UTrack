@@ -1,6 +1,4 @@
-package edu.tracker.monitor.screen;
-
-import edu.tracker.data.ScreenDataType;
+package edu.utrack.data;
 
 /**
  * Created by Tobi on 26/02/2018.

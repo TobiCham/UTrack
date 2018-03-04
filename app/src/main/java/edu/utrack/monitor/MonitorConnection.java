@@ -1,11 +1,10 @@
-package edu.tracker.monitor;
+package edu.utrack.monitor;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import edu.tracker.data.Database;
-import edu.tracker.monitor.screen.ScreenData;
+import edu.utrack.data.database.Database;
 
 /**
  * Created by Tobi on 26/02/2018.

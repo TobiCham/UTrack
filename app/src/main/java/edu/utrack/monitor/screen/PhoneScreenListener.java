@@ -1,13 +1,13 @@
-package edu.tracker.monitor.screen;
+package edu.utrack.monitor.screen;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import edu.tracker.MainActivity;
-import edu.tracker.data.ScreenDataType;
-import edu.tracker.data.ScreenTable;
-import edu.tracker.monitor.MonitorService;
+import edu.utrack.MainActivity;
+import edu.utrack.data.ScreenData;
+import edu.utrack.data.ScreenDataType;
+import edu.utrack.monitor.MonitorService;
 
 public class PhoneScreenListener extends BroadcastReceiver {
 
@@ -24,7 +24,7 @@ public class PhoneScreenListener extends BroadcastReceiver {
         ScreenDataType type = ScreenDataType.getByIntentAction(action);
         if(type == null) return; //This shouldn't happen
 
-        service.getDatabase().getTableScreen().insertData(new ScreenData(type));
+        service.getDatabase().getScreenTable().insertData(new ScreenData(type));
         if(context instanceof MainActivity) ((MainActivity) context).updateUnlocks();
     }
 }

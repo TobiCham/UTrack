@@ -1,17 +1,14 @@
-package edu.tracker.data;
+package edu.utrack.data.database;
 
-import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteStatement;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.tracker.monitor.screen.ScreenData;
+import edu.utrack.data.ScreenData;
+import edu.utrack.data.ScreenDataType;
 
 public class ScreenTable extends Table<ScreenData> {
 
@@ -56,9 +53,6 @@ public class ScreenTable extends Table<ScreenData> {
     protected ScreenData readValue(Cursor cursor) {
         long timestamp = cursor.getLong(0);
         ScreenDataType type = ScreenDataType.getByDatabaseID((byte) cursor.getInt(1));
-
-        System.out.println(timestamp + ", " + type.getFriendlyName());
-
         return new ScreenData(type, timestamp);
     }
 

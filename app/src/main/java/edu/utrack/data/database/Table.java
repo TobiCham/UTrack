@@ -1,4 +1,4 @@
-package edu.tracker.data;
+package edu.utrack.data.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
