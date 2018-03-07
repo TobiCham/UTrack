@@ -1,32 +1,29 @@
 package edu.utrack;
 
-import android.Manifest;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.CalendarContract;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import edu.utrack.calendar.CalendarData;
+import edu.utrack.calendar.CalendarEvent;
 import edu.utrack.calendar.CalendarHelper;
-import edu.utrack.data.ScreenDataType;
+import edu.utrack.data.app.AppEvent;
+import edu.utrack.data.screen.ScreenDataType;
 import edu.utrack.monitor.MonitorConnection;
 import edu.utrack.monitor.MonitorService;
+import edu.utrack.util.AppUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateUnlocks() {
         if (monitorConnection.isConnected()) {
-            Map<ScreenDataType, Integer> map = monitorConnection.getDatabase().getScreenTable().getScreenCounts();
+            Map<ScreenDataType, Integer> map = monitorConnection.getDatabase().getScreenEventsTable().getScreenCounts();
             List<ScreenDataType> sortedTypes = new ArrayList<>(map.keySet());
             Collections.sort(sortedTypes, (t1, t2) -> t1.getFriendlyName().compareTo(t2.getFriendlyName()));
 
@@ -63,13 +60,34 @@ public class MainActivity extends AppCompatActivity {
                 if (i != 0) builder.append(", ");
                 builder.append(sortedTypes.get(i).getFriendlyName()).append(": ").append(map.get(sortedTypes.get(i)));
             }
-            monitorConnection.getDatabase().getScreenTable().getAllData();
+            Cursor cursor = monitorConnection.getDatabase().getWritableDatabase().rawQuery("SELECT `name` FROM `sqlite_master`", null);
+            while(cursor.moveToNext()) {
+                System.out.println(cursor.getString(0));
+            }
+
+            monitorConnection.getDatabase().getScreenEventsTable().getAllData();
             ((TextView) findViewById(R.id.dataText)).setText(builder.toString());
+
+            List<AppEvent> events = monitorConnection.getDatabase().getAppEventsTable().getAllData();
+            Map<String, String> names = new HashMap<>();
+            for(int i = 0; i < events.size(); i++) {
+                AppEvent e = events.get(i);
+                String packageName = e.getApp().getPackageName();
+                String name = names.get(packageName);
+                if(name == null) {
+                    name = AppUtils.getAppName(packageName, this);
+                    names.put(packageName, name);
+                }
+                SimpleDateFormat startFormat = new SimpleDateFormat("dd/MM HH:mm:ss");
+                SimpleDateFormat timeFormat = new SimpleDateFormat("mm:ss");
+
+                System.out.println((i + 1) + ". " + name + " - " + startFormat.format(new Date(e.getStartTime())) + " for " + timeFormat.format(new Date(e.getDuration())));
+            }
         }
     }
 
     public void clearButtonClick(View view) {
-        monitorConnection.getDatabase().getScreenTable().clearTable();
+        monitorConnection.getDatabase().getScreenEventsTable().clearTable();
         updateUnlocks();
     }
 
@@ -86,7 +104,17 @@ public class MainActivity extends AppCompatActivity {
         updateUnlocks();
         calendarHelper.requestCalendars((calendars) -> {
             CalendarData myTimetable = calendarHelper.getMyTimetableData(calendars);
-            if(myTimetable != null) System.out.println("Mytimetable found!");
+            if(myTimetable != null) {
+                System.out.println("Mytimetable found!");
+                calendarHelper.requestEvents(myTimetable, (events) -> {
+                    SimpleDateFormat format = new SimpleDateFormat("dd/MM HH:mm");
+
+                    for(int i = 0; i < events.size(); i++) {
+                        CalendarEvent event = events.get(i);
+                        System.out.println((i + 1) + ". " + event.getTitle() + "(" + event.getLocation() + "): " + format.format(new Date(event.getStartTime())) + " - " + format.format(new Date(event.getEndTime())));
+                    }
+                });
+            }
             else {
                 System.out.println("Need to select timetable:");
                 for(CalendarData d : calendars) {

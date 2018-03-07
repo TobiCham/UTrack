@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import edu.utrack.MainActivity;
-import edu.utrack.data.ScreenData;
-import edu.utrack.data.ScreenDataType;
+import edu.utrack.data.screen.ScreenEvent;
+import edu.utrack.data.screen.ScreenDataType;
 import edu.utrack.monitor.MonitorService;
 
 public class PhoneScreenListener extends BroadcastReceiver {
@@ -24,7 +24,7 @@ public class PhoneScreenListener extends BroadcastReceiver {
         ScreenDataType type = ScreenDataType.getByIntentAction(action);
         if(type == null) return; //This shouldn't happen
 
-        service.getDatabase().getScreenTable().insertData(new ScreenData(type));
+        service.getDatabase().getScreenEventsTable().insertData(new ScreenEvent(type));
         if(context instanceof MainActivity) ((MainActivity) context).updateUnlocks();
     }
 }

@@ -6,10 +6,14 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import edu.utrack.data.database.Database;
-import edu.utrack.data.ScreenDataType;
+import edu.utrack.data.app.AppData;
+import edu.utrack.data.app.AppEvent;
+import edu.utrack.database.Database;
+import edu.utrack.database.table.DataTable;
+import edu.utrack.database.table.Table;
+import edu.utrack.data.screen.ScreenDataType;
 import edu.utrack.monitor.app.ActivityMonitor;
-import edu.utrack.monitor.app.ForegroundAppInfo;
+import edu.utrack.data.app.ForegroundAppInfo;
 import edu.utrack.monitor.screen.PhoneScreenListener;
 
 /**
@@ -17,6 +21,9 @@ import edu.utrack.monitor.screen.PhoneScreenListener;
  */
 
 public class MonitorService extends Service {
+
+    private static final int SAVE_TIME = 150;
+    private static final int APP_CHECK_TIME = 1;
 
     private PhoneScreenListener listener;
     private ActivityMonitor monitor;
@@ -53,7 +60,7 @@ public class MonitorService extends Service {
                 while(true) {
                     saveData();
                     try {
-                        Thread.sleep(30_000);
+                        Thread.sleep(SAVE_TIME * 1000);
                     } catch (InterruptedException e) {
                         //Thread has been interrupted, stop saving
                         break;
@@ -67,15 +74,21 @@ public class MonitorService extends Service {
         }
 
         if(monitor == null) {
-            monitor = new ActivityMonitor(this, 5_000, this::activityCallback);
+            monitor = new ActivityMonitor(this, APP_CHECK_TIME * 1000, this::activityChanged);
             monitor.start();
         }
     }
 
-    private void activityCallback(ForegroundAppInfo app) {
-        if(app == null) return;
+    private void activityChanged(ForegroundAppInfo from, ForegroundAppInfo to, long startTime, long time) {
+        from.getPackageName();
 
-        System.out.println("Currently running app: " + app.getLabel() + " (" + app.getPackageName() + ")");
+        System.out.println("Change app! " + from.getPackageName() + " -> " + (to == null ? "Nothing" : to.getPackageName()));
+        System.out.println("Spent " + (time / 1000) + " seconds in the app.");
+
+        //Gets the app data for the app which was running (or creates if doesn't already exist - thats important!)
+        AppData data = database.getAppsTable().getOrCreateAppData(from.getPackageName());
+
+        database.getAppEventsTable().insertData(new AppEvent(data, startTime, startTime + time));
     }
 
     @Override
@@ -91,7 +104,9 @@ public class MonitorService extends Service {
     }
 
     private void saveData() {
-        database.getScreenTable().saveCache();
+        for(Table table : database.getTables()) {
+            if(table instanceof DataTable) ((DataTable) table).saveCache();
+        }
     }
 
     public Database getDatabase() {

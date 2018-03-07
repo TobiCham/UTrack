@@ -14,6 +14,8 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
 
+import edu.utrack.data.app.ForegroundAppInfo;
+
 import static android.content.Context.POWER_SERVICE;
 
 /**
@@ -59,7 +61,7 @@ public class AppDetector {
 
         if(foregroundAppPackageInfo != null) {
             ApplicationInfo info = foregroundAppPackageInfo.applicationInfo;
-            return new ForegroundAppInfo(info, context);
+            return new ForegroundAppInfo(info.packageName, info.className);
         }
         return null;
     }
@@ -77,7 +79,7 @@ public class AppDetector {
         while (usageEvents.hasNextEvent()) {
             usageEvents.getNextEvent(event);
             if(event.getEventType() == UsageEvents.Event.MOVE_TO_FOREGROUND) {
-                info = new ForegroundAppInfo(event.getPackageName(), event.getClassName(), context);
+                info = new ForegroundAppInfo(event.getPackageName(), event.getClassName());
             }
         }
         return info;

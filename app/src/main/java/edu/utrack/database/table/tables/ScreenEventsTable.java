@@ -1,4 +1,4 @@
-package edu.utrack.data.database;
+package edu.utrack.database.table.tables;
 
 import android.database.Cursor;
 
@@ -7,14 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.utrack.data.ScreenData;
-import edu.utrack.data.ScreenDataType;
+import edu.utrack.database.Database;
+import edu.utrack.database.table.DataTable;
+import edu.utrack.data.screen.ScreenEvent;
+import edu.utrack.data.screen.ScreenDataType;
 
-public class ScreenTable extends Table<ScreenData> {
+public class ScreenEventsTable extends DataTable<ScreenEvent> {
 
     private static final String TABLE_NAME = "screendata";
 
-    public ScreenTable(Database database) {
+    public ScreenEventsTable(Database database) {
         super(database);
     }
 
@@ -24,7 +26,7 @@ public class ScreenTable extends Table<ScreenData> {
     }
 
     public Map<ScreenDataType, Integer> getScreenCounts() {
-        List<ScreenData> cache = new ArrayList<>(getToSaveData());
+        List<ScreenEvent> cache = new ArrayList<>(getToSaveData());
         Cursor cursor = getReadableDB().rawQuery("select distinct `type`, count(`type`) as \"count\" from `" + getTableName() + "` group by `type`", new String[0]);
 
         Map<ScreenDataType, Integer> map = new HashMap<>();
@@ -35,7 +37,7 @@ public class ScreenTable extends Table<ScreenData> {
             int count = cursor.getInt(1);
             map.put(type, count);
         }
-        for(ScreenData d : cache) {
+        for(ScreenEvent d : cache) {
             Integer val = map.get(d.getType());
             if(val == null) val = 0;
             val++;
@@ -45,15 +47,15 @@ public class ScreenTable extends Table<ScreenData> {
     }
 
     @Override
-    protected void writeValue(ScreenData data) {
+    protected void writeValue(ScreenEvent data) {
         getWritebleDB().execSQL("INSERT INTO `" + getTableName() + "` VALUES(" + data.getTimeStamp() + ", " + data.getType().getDatabaseId() + ")");
     }
 
     @Override
-    protected ScreenData readValue(Cursor cursor) {
+    protected ScreenEvent readValue(Cursor cursor) {
         long timestamp = cursor.getLong(0);
         ScreenDataType type = ScreenDataType.getByDatabaseID((byte) cursor.getInt(1));
-        return new ScreenData(type, timestamp);
+        return new ScreenEvent(type, timestamp);
     }
 
     @Override

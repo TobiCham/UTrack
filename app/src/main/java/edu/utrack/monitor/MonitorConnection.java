@@ -4,7 +4,7 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import edu.utrack.data.database.Database;
+import edu.utrack.database.Database;
 
 /**
  * Created by Tobi on 26/02/2018.

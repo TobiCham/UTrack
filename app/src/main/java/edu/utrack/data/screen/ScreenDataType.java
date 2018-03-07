@@ -1,4 +1,4 @@
-package edu.utrack.data;
+package edu.utrack.data.screen;
 
 import android.content.Intent;
 
