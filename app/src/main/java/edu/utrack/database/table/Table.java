@@ -17,7 +17,7 @@ public abstract class Table {
     }
 
     public void clearTable() {
-        database.getWritableDatabase().execSQL("drop table `" + getTableName() + "`");
+        database.getWritableDatabase().execSQL("DROP TABLE IF EXISTS `" + getTableName() + "`");
     }
 
     protected final SQLiteDatabase getWritebleDB() {

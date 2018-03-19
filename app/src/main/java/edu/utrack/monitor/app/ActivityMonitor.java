@@ -2,9 +2,13 @@ package edu.utrack.monitor.app;
 
 import android.content.Context;
 
+import java.util.List;
 import java.util.Objects;
 
+import edu.utrack.calendar.CalendarTracker;
 import edu.utrack.data.app.ForegroundAppInfo;
+import edu.utrack.data.calendar.CalendarEvent;
+import edu.utrack.monitor.MonitorService;
 import edu.utrack.util.BiCallback;
 import edu.utrack.util.Callback;
 
@@ -14,21 +18,21 @@ import edu.utrack.util.Callback;
 
 public class ActivityMonitor {
 
-    private Context context;
+    private MonitorService context;
     private Thread thread;
     private int delayTime;
     private boolean active = false;
 
     private AppDetector detector;
-    private AppChangeEvent event;
+    private AppChangeEvent callback;
 
     private ForegroundAppInfo currentApp;
     private long appStartTime;
 
-    public ActivityMonitor(Context context, int delayTime, AppChangeEvent event) {
+    public ActivityMonitor(MonitorService context, int delayTime, AppChangeEvent callback) {
         this.context = context;
         this.delayTime = delayTime;
-        this.event = event;
+        this.callback = callback;
         this.thread = new Thread(this::startSchedule);
         detector = new AppDetector(context);
     }
@@ -45,8 +49,7 @@ public class ActivityMonitor {
         while(true) {
             try {
                 Thread.sleep(delayTime);
-                ForegroundAppInfo info = detector.getForegroundApp();
-                handleCurrentApp(info);
+                tick();
             } catch (InterruptedException e) {
                 break;
             }
@@ -57,21 +60,40 @@ public class ActivityMonitor {
     //With lollipop, we can get a log of all these events. It may be worth adapting the implementation
     //to use this if its supported in lollipop instead of polling every second.
 
-    private void handleCurrentApp(ForegroundAppInfo app) {
-        //We ignore all apps which start with com.android - these are likely system apps
-        if(app == currentApp || Objects.equals(app, currentApp)) return;
+    private void tick() {
+        List<CalendarEvent> currentEvents = context.getCalendarTracker().getCurrentEvents();
+        if(currentEvents.isEmpty()) return;
+
+        long time = System.currentTimeMillis();
+        ForegroundAppInfo info = detector.getForegroundApp();
+
+        for(CalendarEvent event : currentEvents) {
+            //The event will have ended by the next time the method is called, so pretend that the app was closed
+            if(System.currentTimeMillis() + delayTime >= event.getEndTime()) {
+                if(currentApp == null) {
+                    long estimatedTime = event.getEndTime() - System.currentTimeMillis();
+                    if(estimatedTime != 0) callback.appChange(info, null, System.currentTimeMillis(), estimatedTime, event);
+                }
+            }
+        }
+
+        if(info == currentApp || Objects.equals(info, currentApp)) return;
 
         if(currentApp == null) {
-            currentApp = app;
+            currentApp = info;
             appStartTime = System.currentTimeMillis();
         } else {
             //Different apps
             long endTime = System.currentTimeMillis();
             long timeSpent = endTime - appStartTime;
 
-            event.appChange(currentApp, app, appStartTime, timeSpent);
+            for(CalendarEvent event : currentEvents) {
+                if(System.currentTimeMillis() + delayTime < event.getEndTime()) {
+                    callback.appChange(currentApp, info, appStartTime, timeSpent, event);
+                }
+            }
 
-            currentApp = app;
+            currentApp = info;
             appStartTime = endTime;
         }
     }
@@ -84,13 +106,13 @@ public class ActivityMonitor {
         return active;
     }
 
-    public AppChangeEvent getEvent() {
-        return event;
+    public AppChangeEvent getCallback() {
+        return callback;
     }
 
     @FunctionalInterface
     public interface AppChangeEvent {
-        void appChange(ForegroundAppInfo from, ForegroundAppInfo to, long startTime, long timeSpent);
+        void appChange(ForegroundAppInfo from, ForegroundAppInfo to, long startTime, long timeSpent, CalendarEvent event);
     }
 }
 

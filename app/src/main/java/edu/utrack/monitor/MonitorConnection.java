@@ -21,11 +21,6 @@ public class MonitorConnection implements ServiceConnection {
     }
 
     public boolean isConnected() {
-
-        System.out.println(service);
-        if(service != null) System.out.println(service.getListener());
-        else System.out.println("null");
-
         return service != null;
     }
 

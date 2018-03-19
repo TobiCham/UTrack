@@ -6,22 +6,24 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.utrack.data.CalendarEventEvent;
+import edu.utrack.data.calendar.CalendarEvent;
 import edu.utrack.database.Database;
 
 /**
  * Created by Tobi on 07/03/2018.
  */
 
-public abstract class DataTable<T> extends Table {
+public abstract class EventTable<T extends CalendarEventEvent> extends Table {
 
     private boolean autosave;
     private List<T> toSaveData;
 
-    public DataTable(Database database) {
+    public EventTable(Database database) {
         this(database, false);
     }
 
-    public DataTable(Database database, boolean autosave) {
+    public EventTable(Database database, boolean autosave) {
         super(database);
         this.autosave = autosave;
         toSaveData = new ArrayList<>();
@@ -58,12 +60,12 @@ public abstract class DataTable<T> extends Table {
         }
     }
 
-    protected abstract T readValue(Cursor cursor);
+    protected abstract T readValue(Cursor cursor, CalendarEvent event);
 
-    protected List<T> readValues(Cursor cursor) {
+    protected List<T> readValues(Cursor cursor, CalendarEvent event) {
         List<T> list = new ArrayList<>();
         while(cursor.moveToNext()) {
-            list.add(readValue(cursor));
+            list.add(readValue(cursor, event));
         }
         return list;
     }
@@ -82,11 +84,7 @@ public abstract class DataTable<T> extends Table {
         writeValues(saveData);
     }
 
-    public List<T> getAllData() {
-        List<T> data = new ArrayList<>(toSaveData);
-        data.addAll(readValues(getReadableDB().rawQuery("SELECT * FROM `" + getTableName() + "`", new String[0])));
-        return data;
-    }
+    public abstract List<T> getData(CalendarEvent event);
 
     @Override
     public void clearTable() {

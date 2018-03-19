@@ -74,7 +74,8 @@ public class AppDetector {
         UsageStatsManager mUsageStatsManager = (UsageStatsManager) context.getSystemService(Service.USAGE_STATS_SERVICE);
         long time = System.currentTimeMillis();
 
-        UsageEvents usageEvents = mUsageStatsManager.queryEvents(time - 1000 * 3600, time);
+        //15 minutes
+        UsageEvents usageEvents = mUsageStatsManager.queryEvents(time - 1000 * 60 * 15, time);
         UsageEvents.Event event = new UsageEvents.Event();
         while (usageEvents.hasNextEvent()) {
             usageEvents.getNextEvent(event);

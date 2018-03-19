@@ -6,7 +6,7 @@ import android.content.Intent;
  * Created by Tobi on 03/03/2018.
  */
 
-public enum ScreenDataType {
+public enum ScreenEventType {
 
     ON(Intent.ACTION_SCREEN_ON, "Screen On", 0),
     OFF(Intent.ACTION_SCREEN_OFF, "Screen Off", 1),
@@ -15,7 +15,7 @@ public enum ScreenDataType {
     private String intentAction, friendlyName;
     private int dbID;
 
-    ScreenDataType(String intentAction, String friendlyName, int dbID) {
+    ScreenEventType(String intentAction, String friendlyName, int dbID) {
         this.intentAction = intentAction;
         this.friendlyName = friendlyName;
         this.dbID = dbID;
@@ -33,15 +33,15 @@ public enum ScreenDataType {
         return friendlyName;
     }
 
-    public static ScreenDataType getByDatabaseID(int id) {
-        for(ScreenDataType type : values()) {
+    public static ScreenEventType getByDatabaseID(int id) {
+        for(ScreenEventType type : values()) {
             if(type.dbID == id) return type;
         }
         return null;
     }
 
-    public static ScreenDataType getByIntentAction(String name) {
-        for(ScreenDataType type : values()) {
+    public static ScreenEventType getByIntentAction(String name) {
+        for(ScreenEventType type : values()) {
             if(type.intentAction.equals(name)) return type;
         }
         return null;
