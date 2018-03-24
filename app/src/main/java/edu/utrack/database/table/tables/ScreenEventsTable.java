@@ -3,16 +3,15 @@ package edu.utrack.database.table.tables;
 import android.database.Cursor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import edu.utrack.data.calendar.CalendarEvent;
-import edu.utrack.database.Database;
-import edu.utrack.database.table.EventTable;
 import edu.utrack.data.screen.ScreenEvent;
 import edu.utrack.data.screen.ScreenEventType;
+import edu.utrack.database.Database;
+import edu.utrack.database.table.EventTable;
 
 public class ScreenEventsTable extends EventTable<ScreenEvent> {
 
@@ -24,53 +23,43 @@ public class ScreenEventsTable extends EventTable<ScreenEvent> {
 
     @Override
     public String getCreateSQLData() {
-        return "(`time` INTEGER, `type` INTEGER, `event` INTEGER)";
+        return "(`time` INTEGER, `type` INTEGER)";
     }
 
-    public Map<ScreenEventType, Integer> getScreenCounts(CalendarEvent event) {
-        List<ScreenEvent> cache = new ArrayList<>(getToSaveData());
-        Cursor cursor = getReadableDB().rawQuery("select distinct `type`, count(`type`) as \"count\" from `" + getTableName() + "` WHERE `event` = " + event.getDBID() + " group by `type`", new String[0]);
-
-        Map<ScreenEventType, Integer> map = new HashMap<>();
-        for(ScreenEventType type : ScreenEventType.values()) map.put(type, 0);
-
-        while(cursor.moveToNext()) {
-            ScreenEventType type = ScreenEventType.getByDatabaseID(cursor.getInt(0));
-            int count = cursor.getInt(1);
-            map.put(type, count);
-        }
-        for(ScreenEvent d : cache) {
-            if(!d.getEvent().equals(event)) continue;
-
-            Integer val = map.get(d.getType());
-            if(val == null) val = 0;
-            val++;
-            map.put(d.getType(), val);
-        }
-        return map;
+    @Override
+    protected ScreenEvent readValue(Cursor cursor) {
+        return new ScreenEvent(cursor.getLong(0), ScreenEventType.getByDatabaseID(cursor.getInt(1)));
     }
-
 
     @Override
     protected void writeValue(ScreenEvent data) {
-        getWritebleDB().execSQL("INSERT INTO `" + getTableName() + "` VALUES(" + data.getTimeStamp() + ", " + data.getType().getDatabaseId() + ", " + data.getEvent().getDBID() + ")");
+        String qry = "INSERT OR IGNORE INTO `" + getTableName() + "` VALUES(" + data.getTimeStamp() + "," + data.getType().getDatabaseId() + ")";
+        getWritebleDB().execSQL(qry);
     }
 
     @Override
-    public List<ScreenEvent> getData(CalendarEvent event) {
-        Cursor cursor = getReadableDB().rawQuery("select `time`, `type` FROM `" + getTableName() + "` WHERE `event` = " + event.getDBID(), new String[0]);
+    public List<ScreenEvent> getEvents(CalendarEvent event) {
+        long startDate = event.getStartTime();
+        long endDate = event.getEndTime();
 
-        List<ScreenEvent> events = readValues(cursor, event);
-        for(ScreenEvent e : getToSaveData()) {
-            if(e.getEvent().equals(event)) events.add(e);
+        String qry = "SELECT * FROM `" + getTableName() + "` WHERE `time` >= ? AND `time` <= ?";
+        List<ScreenEvent> events = readValues(getReadableDB().rawQuery(qry, new String[] { Long.toString(startDate), Long.toString(endDate) } ));
+
+        for(ScreenEvent screenEvent : getToSaveData()) {
+            if(screenEvent.getTimeStamp() >= startDate && screenEvent.getTimeStamp() <= endDate) events.add(screenEvent);
         }
-        Collections.sort(events);
         return events;
     }
 
-    @Override
-    protected ScreenEvent readValue(Cursor cursor, CalendarEvent event) {
-        return new ScreenEvent(ScreenEventType.getByDatabaseID(cursor.getInt(0)), cursor.getLong(1), event);
+    public Map<ScreenEventType, List<ScreenEvent>> getScreenCounts(CalendarEvent event) {
+        List<ScreenEvent> events = getEvents(event);
+        Map<ScreenEventType, List<ScreenEvent>> map = new HashMap<>();
+        for(ScreenEventType type : ScreenEventType.values()) map.put(type, new ArrayList<>());
+
+        for(ScreenEvent e : events) {
+            map.get(e.getType()).add(e);
+        }
+        return map;
     }
 
     @Override

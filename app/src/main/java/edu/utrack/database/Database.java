@@ -4,10 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import edu.utrack.database.table.Table;
 import edu.utrack.database.table.tables.AppEventsTable;
 import edu.utrack.database.table.tables.AppsTable;
 import edu.utrack.database.table.tables.ScreenEventsTable;
-import edu.utrack.database.table.Table;
 
 public class Database extends SQLiteOpenHelper {
 

@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

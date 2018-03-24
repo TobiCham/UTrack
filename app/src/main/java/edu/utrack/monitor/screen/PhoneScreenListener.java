@@ -7,9 +7,7 @@ import android.content.Intent;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.utrack.MainActivity;
-import edu.utrack.calendar.CalendarTracker;
-import edu.utrack.data.calendar.CalendarEvent;
+import edu.utrack.activity.MainActivity;
 import edu.utrack.data.screen.ScreenEvent;
 import edu.utrack.data.screen.ScreenEventType;
 import edu.utrack.monitor.MonitorService;
@@ -31,13 +29,7 @@ public class PhoneScreenListener extends BroadcastReceiver {
 
         List<ScreenEvent> eventList = new ArrayList<>();
 
-        for(CalendarEvent event : service.getCalendarTracker().getCurrentEvents()) {
-            eventList.add(new ScreenEvent(type, event));
-        }
+        eventList.add(new ScreenEvent(type));
         if(!eventList.isEmpty()) service.getDatabase().getScreenEventsTable().insertData(eventList);
-
-        System.out.println("Screen Event: " + type + " (" + action + ")");
-
-        if(context instanceof MainActivity) ((MainActivity) context).updateUnlocks();
     }
 }

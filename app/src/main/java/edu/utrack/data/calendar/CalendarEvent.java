@@ -1,14 +1,12 @@
 package edu.utrack.data.calendar;
 
-import android.support.annotation.NonNull;
-
 import java.util.Objects;
 
 /**
  * Created by Tobi on 07/03/2018.
  */
 
-public class CalendarEvent implements Comparable<CalendarEvent> {
+public class CalendarEvent {
 
     private CalendarData calendar;
     private int id;
@@ -81,13 +79,5 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
         sb.append(", end=").append(end);
         sb.append('}');
         return sb.toString();
-    }
-
-    @Override
-    public int compareTo(@NonNull CalendarEvent o) {
-        if(equals(o)) return 0;
-        int compare = Long.compare(start, o.start);
-        if(compare != 0) return compare;
-        return Long.compare(end, o.end);
     }
 }

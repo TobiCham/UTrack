@@ -16,12 +16,7 @@ public class CalendarTracker {
     private List<CalendarEvent> events = new ArrayList<>();
     private Map<Integer, CalendarEvent> idsMap = new HashMap<>();
 
-    public CalendarTracker() {
-        System.out.println("Create tracker");
-    }
-
     public void updateEventsList(List<CalendarEvent> events) {
-        System.out.println("Change! " + this.events + " -> " + events);
         this.events.clear();
         this.idsMap.clear();
 

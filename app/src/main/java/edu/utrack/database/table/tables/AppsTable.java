@@ -36,7 +36,7 @@ public class AppsTable extends Table {
         String sql = "SELECT DISTINCT `{u}`.`app`, `{a}`.`package`, COUNT(`{u}`.`app`) as `count` "
                    + "FROM `{u}` INNER JOIN {a} ON `{a}`.`id` = `{u}`.`app` "
                    + "GROUP BY `{u}`.`app` ORDER BY COUNT(`{u}`.`app`) DESC LIMIT " + LOAD_LIMIT;
-        sql = sql.replace("{u}", database.getAppEventsTable().getTableName()); //TODO change name here
+        sql = sql.replace("{u}", database.getAppEventsTable().getTableName());
         sql = sql.replace("{a}", getTableName());
 
         Cursor cursor = db.rawQuery(sql, new String[0]);
