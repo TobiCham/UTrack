@@ -34,10 +34,9 @@ import edu.utrack.util.AppUtils;
  * Created by Tobi on 24/03/2018.
  */
 
-public class ActivityEventViewData extends Activity {
+public class ActivityEventViewData extends MonitorActivity {
 
     private CalendarEvent event;
-    private MonitorConnection connection;
 
     //1 = startTime, -1 = -startTime, 2 = appname, -2 = -appname, 3 = duration, 3 = -duration
     private int sortDirection = 0;
@@ -64,6 +63,11 @@ public class ActivityEventViewData extends Activity {
         updateData();
     }
 
+    @Override
+    public void onConnected() {
+        updateData();
+    }
+
     private void changeSortDirection(int type) {
         if(Math.abs(sortDirection) == type) sortDirection *= -1;
         else {
@@ -74,23 +78,14 @@ public class ActivityEventViewData extends Activity {
         updateEvents();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        connection = new MonitorConnection(this::updateData);
-        startService(new Intent(this, MonitorService.class));
-        bindService(new Intent(this, MonitorService.class), connection, Context.BIND_ABOVE_CLIENT);
-    }
-
     private void updateData() {
         setMessage("Loading Data...");
         setButtonEnabled(false);
         setScrollViewEnabled(false);
 
-        if(connection == null || !connection.isConnected()) return;
+        if(getConnection() == null || !getConnection().isConnected()) return;
 
-        Database db = connection.getDatabase();
+        Database db = getConnection().getDatabase();
         new Thread(() -> {
             List<AppEvent> appEvents = db.getAppEventsTable().getEvents(event);
             Map<ScreenEventType, List<ScreenEvent>> screenEvents = db.getScreenEventsTable().getScreenCounts(event);
@@ -106,7 +101,6 @@ public class ActivityEventViewData extends Activity {
         }
 
         //Update UI
-
         setMessage(null);
         setButtonEnabled(true);
         setScrollViewEnabled(true);
@@ -214,17 +208,5 @@ public class ActivityEventViewData extends Activity {
 
     private int getPaddingPX(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unbindService(connection);
-        connection = null;
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 }
