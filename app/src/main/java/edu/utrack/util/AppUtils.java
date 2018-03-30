@@ -1,5 +1,6 @@
 package edu.utrack.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -21,5 +22,9 @@ public class AppUtils {
             }
         } catch (PackageManager.NameNotFoundException e) { }
         return name == null ? "Unknown" : name;
+    }
+
+    public static int getPaddingPX(Activity activity, int dp) {
+        return (int) (dp * activity.getResources().getDisplayMetrics().density + 0.5f);
     }
 }

@@ -31,26 +31,23 @@ import edu.utrack.util.AppUtils;
  * Created by Tobi on 29/03/2018.
  */
 
-public class FragmentDataOverview extends DataViewFragment {
+public class FragmentDataSummary extends DataViewFragment {
 
     //1 = startTime, -1 = -startTime, 2 = appname, -2 = -appname, 3 = duration, 3 = -duration
     private int sortDirection = 0;
     private List<AppEvent> appEvents = new ArrayList<>();
     private Map<String, String> appNames = new HashMap<>();
 
-    private CalendarEvent event;
-
     private static final DateFormat START_DATE_FORMAT = new SimpleDateFormat("dd/MM HH:mm");
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        event = new Gson().fromJson(getArguments().getString("event"), CalendarEvent.class);
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.fragment_data_summary, container, false);
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         getView().findViewById(R.id.summaryColumnTime).setOnClickListener((v) -> changeSortDirection(1));
         getView().findViewById(R.id.summaryColumnApp).setOnClickListener((v) -> changeSortDirection(2));

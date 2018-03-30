@@ -1,6 +1,5 @@
 package edu.utrack.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import edu.utrack.R;
+import edu.utrack.activity.dataview.ActivityViewData;
 import edu.utrack.calendar.CalendarHelper;
 import edu.utrack.data.calendar.CalendarData;
 import edu.utrack.data.calendar.CalendarEvent;
@@ -25,7 +26,7 @@ import edu.utrack.data.calendar.CalendarEvent;
  * Created by Tobi on 24/03/2018.
  */
 
-public class ActivitySelectEvent extends Activity {
+public class ActivitySelectEvent extends TrackActivity {
 
     private CalendarHelper calendarHelper;
 
@@ -36,25 +37,31 @@ public class ActivitySelectEvent extends Activity {
 
         calendarHelper = new CalendarHelper(this);
         updateCalendar();
+    }
 
-        findViewById(R.id.calendarButtonRefreshEvents).setOnClickListener((e) -> updateCalendar());
+    @Override
+    public TrackMenuType getMenuType() {
+        return TrackMenuType.MENU;
+    }
+
+    @Override
+    public void getMenuItems(Map<Integer, Runnable> menus) {
+        super.getMenuItems(menus);
+        menus.put(R.id.menuReload, this::updateCalendar);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         calendarHelper.onPermissionResult(requestCode, permissions, grantResults);
     }
-
     private void eventClicked(TextView view, CalendarEvent event) {
-        Intent intent = new Intent(this, ActivityEventViewData.class);
+        Intent intent = new Intent(this, ActivityViewData.class);
         intent.putExtra("event", new Gson().toJson(event));
         startActivity(intent);
     }
 
     private void updateCalendar() {
         setMessage("Loading Events...");
-        setButtonEnabled(false);
-
         ((LinearLayout) findViewById(R.id.calendarLayoutList)).removeAllViews();
 
         new Thread(() -> calendarHelper.requestCalendars(this::onGetCalendars)).start();
@@ -64,7 +71,6 @@ public class ActivitySelectEvent extends Activity {
         if(calendars == null) {
             runOnUiThread(() -> {
                 setMessage("You must allow this app to access your calendar!");
-                setButtonEnabled(true);
             });
             return;
         }
@@ -78,7 +84,6 @@ public class ActivitySelectEvent extends Activity {
         if(events == null) {
             runOnUiThread(() -> {
                 setMessage("You must allow this app to access your calendar events!");
-                setButtonEnabled(true);
             });
             return;
         }
@@ -95,8 +100,6 @@ public class ActivitySelectEvent extends Activity {
     }
 
     private void updateEvents(List<CalendarEvent> events) {
-        setButtonEnabled(true);
-
         if(events.isEmpty()) {
             setMessage("No calendar events to show!");
             return;
@@ -128,10 +131,6 @@ public class ActivitySelectEvent extends Activity {
 
     private int getPaddingPX(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
-    }
-
-    private void setButtonEnabled(boolean enabled) {
-        findViewById(R.id.calendarButtonRefreshEvents).setEnabled(enabled);
     }
 
     private void setMessage(String msg) {

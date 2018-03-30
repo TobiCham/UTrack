@@ -124,28 +124,4 @@
         </LinearLayout>
 
     </ScrollView>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <Button
-                android:id="@+id/calendarButtonRefreshEvents"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="bottom"
-                android:enabled="false"
-                android:text="Refresh Events" />
-
-        </RelativeLayout>
-    </LinearLayout>
 </LinearLayout>

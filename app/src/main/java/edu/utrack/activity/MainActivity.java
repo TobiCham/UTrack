@@ -18,9 +18,6 @@ import edu.utrack.settings.AppSettings;
 
 public class MainActivity extends Activity {
 
-    private MonitorConnection monitorConnection;
-    private List<CalendarEvent> eventsToUpdate = new ArrayList<>();
-
     public static AppSettings settings;
 
     @Override
@@ -35,39 +32,6 @@ public class MainActivity extends Activity {
                 e.printStackTrace();
             }
         }
-        startService(new Intent(this, MonitorService.class));
-//        monitorConnection = new MonitorConnection(() -> {
-//            System.out.println("BOUND");
-//            updateUnlocks();
-//            if(!eventsToUpdate.isEmpty()) {
-//                monitorConnection.getService().getCalendarTracker().updateEventsList(eventsToUpdate);
-//                eventsToUpdate.clear();
-//            }
-//        });
         setContentView(R.layout.simple_calendar_view);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        bindService(new Intent(this, MonitorService.class), monitorConnection, Context.BIND_ABOVE_CLIENT);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(monitorConnection.isConnected()) monitorConnection.getService().saveData();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(monitorConnection.isConnected()) monitorConnection.getService().saveData();
-        unbindService(monitorConnection);
     }
 }
