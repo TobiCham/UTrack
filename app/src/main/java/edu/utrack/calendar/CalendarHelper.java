@@ -79,6 +79,7 @@ public class CalendarHelper {
         while(cursor.moveToNext()) {
             data.add(new CalendarData(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3)));
         }
+        cursor.close();
         return data;
     }
 
@@ -113,6 +114,7 @@ public class CalendarHelper {
             events.add(new CalendarEvent(calendar, cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getLong(3), cursor.getLong(4)));
         }
         Collections.sort(events, (e1, e2) -> Long.compare(e1.getStartTime(), e2.getStartTime()));
+        cursor.close();
         return events;
     }
 

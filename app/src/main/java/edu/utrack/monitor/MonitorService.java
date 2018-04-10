@@ -6,6 +6,10 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import java.io.File;
+import java.sql.SQLOutput;
+
+import edu.utrack.activity.TrackActivity;
 import edu.utrack.data.app.AppData;
 import edu.utrack.data.app.AppEvent;
 import edu.utrack.data.app.ForegroundAppInfo;
@@ -15,6 +19,7 @@ import edu.utrack.database.table.EventTable;
 import edu.utrack.database.table.Table;
 import edu.utrack.monitor.app.ActivityMonitor;
 import edu.utrack.monitor.screen.PhoneScreenListener;
+import edu.utrack.settings.AppSettings;
 import edu.utrack.util.AppUtils;
 
 /**
@@ -26,13 +31,15 @@ public class MonitorService extends Service {
     private static final int SAVE_TIME = 10;
     private static final int APP_CHECK_TIME = 1;
 
+    private Binder binder = new Binder();
+    private AppSettings settings;
+
     private PhoneScreenListener listener;
     private ActivityMonitor monitor;
-
-    private Binder binder = new Binder();
+    private Thread saveThread;
     private Database database;
 
-    private Thread saveThread;
+
 
     @Nullable
     @Override
@@ -55,7 +62,6 @@ public class MonitorService extends Service {
 
             registerReceiver(listener, filter);
         }
-
         if(saveThread == null) {
             saveThread = new Thread(() -> {
                 while(true) {
@@ -67,43 +73,58 @@ public class MonitorService extends Service {
                         break;
                     }
                 }
-                saveData();
-                database.close();
-                database = null;
             });
             saveThread.start();
         }
-
         if(monitor == null) {
             monitor = new ActivityMonitor(this, APP_CHECK_TIME * 1000, this::activityChanged);
             monitor.start();
         }
     }
 
+    public void refreshSettings() {
+        settings = null;
+    }
+
+    public boolean doesTrack() {
+        if(settings == null) {
+            settings = new AppSettings(TrackActivity.getSettingsFile(this));
+            settings.load();
+        }
+        return settings.tracks;
+    }
+
     private void activityChanged(ForegroundAppInfo from, ForegroundAppInfo to, long startTime, long time) {
+        if(database == null) return;
+
+        System.out.println("ACTIVITY CHANGED: " + from + " -> " + to);
+
         //Gets the app data for the app which was running (or creates if doesn't already exist - that's important!)
-
-        String fromName = from == null ? "Nothing" : AppUtils.getAppName(from.getPackageName(), this);
-
-        System.out.println("In app " + fromName + " for " + (time / 1000) + "s");
-
         AppData data = database.getAppsTable().getOrCreateAppData(from.getPackageName());
         database.getAppEventsTable().insertData(new AppEvent(data, startTime, startTime + time));
     }
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(listener);
+        if(listener != null) unregisterReceiver(listener);
         listener = null;
 
-        saveThread.interrupt();
+        if(monitor != null) monitor.stop();
+        monitor = null;
+
+        if(saveThread != null) {
+            saveThread.interrupt();
+        }
         saveThread = null;
 
-        monitor.stop();
-        monitor = null;
+        saveData();
+        database.close();
+        database = null;
     }
 
     public void saveData() {
+        if(database == null) return;
+
         boolean saved = false;
         for(Table table : database.getTables()) {
             if(table instanceof EventTable) {

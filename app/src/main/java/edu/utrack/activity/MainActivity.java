@@ -23,15 +23,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if(settings == null) {
-            settings = new AppSettings(new File(getFilesDir(), "settings.json"));
-            try {
-                settings.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         setContentView(R.layout.simple_calendar_view);
     }
 }

@@ -28,6 +28,8 @@ public abstract class EventTable<T> extends Table {
         toSaveData = new ArrayList<>();
     }
 
+    public abstract void deleteOlderThan(long timestamp);
+
     protected abstract T readValue(Cursor cursor);
 
     protected List<T> readValues(Cursor cursor) {

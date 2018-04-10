@@ -39,14 +39,19 @@ public class ActivityMonitor {
     }
 
     private void startSchedule() {
+        active = true;
         while(true) {
             try {
                 Thread.sleep(delayTime);
-                handleCurrentApp(detector.getForegroundApp());
+
+                if(!context.doesTrack()) handleCurrentApp(null);
+                else handleCurrentApp(detector.getForegroundApp());
             } catch (InterruptedException e) {
                 break;
             }
         }
+        active = false;
+        System.out.println("Monitor closed");
     }
 
     //TODO Right now, it constantly checks what app is in the foreground, and saves its own data.
@@ -54,7 +59,7 @@ public class ActivityMonitor {
     //to use this if its supported in lollipop instead of polling every second.
     private void handleCurrentApp(ForegroundAppInfo app) {
         //We ignore all apps which start with com.android - these are likely system apps
-        if(app == currentApp || Objects.equals(app, currentApp)) return;
+        if(ForegroundAppInfo.areSameApp(app, currentApp)) return;
 
         if(currentApp == null) {
             currentApp = app;

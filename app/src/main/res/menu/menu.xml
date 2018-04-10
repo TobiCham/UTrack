@@ -2,10 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/menuCheck"
+        android:title="Check"
+        android:icon="@drawable/ic_check_white_24dp"
+        app:showAsAction="always" />
+
+    <item android:id="@+id/menuCross"
+        android:title="Cross"
+        android:icon="@drawable/ic_close_white_24dp"
+        app:showAsAction="always" />
+
     <item android:id="@+id/menuReload"
         android:title="Reload"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_replay_white_24dp" />
+        app:showAsAction="always"
+        android:icon="@drawable/ic_refresh_white_24dp" />
 
     <item android:id="@+id/menuSettings"
         android:title="Settings"

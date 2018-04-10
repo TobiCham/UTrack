@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -26,6 +27,7 @@ import edu.utrack.data.calendar.CalendarEvent;
 import edu.utrack.data.screen.ScreenEvent;
 import edu.utrack.data.screen.ScreenEventType;
 import edu.utrack.database.Database;
+import edu.utrack.settings.EventExcluder;
 
 /**
  * Created by Tobi on 24/03/2018.
@@ -77,7 +79,7 @@ public class ActivityViewData extends MonitorActivity {
         });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Event Summary");
+        toolbar.setTitle("Details");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -91,6 +93,7 @@ public class ActivityViewData extends MonitorActivity {
     public void getMenuItems(Map<Integer, Runnable> menus) {
         super.getMenuItems(menus);
         menus.put(R.id.menuReload, this::updateData);
+        menus.put(getEventExcluder().isEventExcluded(event) ? R.id.menuCross : R.id.menuCheck, this::changeExclusion);
     }
 
     @Override
@@ -117,6 +120,20 @@ public class ActivityViewData extends MonitorActivity {
 
             runOnUiThread(() -> updateUI(appEvents, screenEvents));
         }).start();
+    }
+
+    private void changeExclusion() {
+        if(event == null) return;
+
+        EventExcluder excluder = getEventExcluder();
+        if(excluder.isEventExcluded(event)) {
+            excluder.includeEvent(event);
+            Toast.makeText(this, "Included '" + event.getTitle() + "' from historic data", Toast.LENGTH_SHORT).show();
+        } else {
+            excluder.excludeEvent(event);
+            Toast.makeText(this, "Excluded '" + event.getTitle() + "' from historic data", Toast.LENGTH_SHORT).show();
+        }
+        invalidateOptionsMenu();
     }
 
     private void updateUI(List<AppEvent> appEvents, Map<ScreenEventType, List<ScreenEvent>> screenEvents) {

@@ -37,6 +37,12 @@ public class ForegroundAppInfo {
         return packageName.equals(info.packageName) && className.equals(info.className);
     }
 
+    public static boolean areSameApp(ForegroundAppInfo app1, ForegroundAppInfo app2) {
+        if(app1 == app2) return true;
+        if(app1 == null || app2 == null) return false;
+        return app1.getPackageName().equals(app2.getPackageName());
+    }
+
     @Override
     public int hashCode() {
         return (41 * packageName.hashCode()) + className.hashCode();

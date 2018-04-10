@@ -71,6 +71,12 @@ public class AppEventsTable extends EventTable<AppEvent> {
         return new ArrayList<>(events);
     }
 
+    //TODO Do this
+    @Override
+    public void deleteOlderThan(long timestamp) {
+
+    }
+
     @Override
     public String getTableName() {
         return TABLE_NAME;

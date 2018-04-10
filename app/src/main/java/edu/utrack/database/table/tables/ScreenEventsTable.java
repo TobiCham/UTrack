@@ -62,6 +62,13 @@ public class ScreenEventsTable extends EventTable<ScreenEvent> {
         return map;
     }
 
+
+    //TODO Do this
+    @Override
+    public void deleteOlderThan(long timestamp) {
+
+    }
+
     @Override
     public String getTableName() {
         return TABLE_NAME;

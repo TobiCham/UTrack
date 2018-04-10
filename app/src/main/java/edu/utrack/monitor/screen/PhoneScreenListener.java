@@ -27,6 +27,11 @@ public class PhoneScreenListener extends BroadcastReceiver {
         ScreenEventType type = ScreenEventType.getByIntentAction(action);
         if(type == null) return; //This shouldn't happen
 
+        if(!service.doesTrack()) {
+            System.out.println("Received screen event but not tracking");
+            return;
+        }
+
         List<ScreenEvent> eventList = new ArrayList<>();
 
         eventList.add(new ScreenEvent(type));

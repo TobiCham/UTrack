@@ -26,7 +26,7 @@ public class ConfigSection {
         }
 	}
 	
-	public static ConfigSection read(File file) throws FileNotFoundException, IOException {
+	public static ConfigSection read(File file) throws IOException {
 		StringBuilder builder = new StringBuilder();
 	    try(BufferedReader reader = new BufferedReader(new FileReader(file))) {
             while(true) {

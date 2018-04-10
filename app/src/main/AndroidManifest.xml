@@ -3,6 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="edu.utrack">
 
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.REAL_GET_TASKS" />
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,20 +17,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="edu.utrack.activity.ActivitySelectEvent" android:theme="@style/AppTheme">
+        <activity
+            android:name=".activity.ActivitySelectEvent"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.dataview.ActivityViewData" android:theme="@style/AppThemeNoActionBar"/>
+        <activity
+            android:name=".activity.dataview.ActivityViewData"
+            android:theme="@style/AppThemeNoActionBar" />
         <activity android:name=".activity.ActivitySettings" />
 
-        <service android:name="edu.utrack.monitor.MonitorService" android:exported="false" android:stopWithTask="false"/>
+        <service
+            android:name=".monitor.MonitorService"
+            android:exported="false"
+            android:stopWithTask="false" />
     </application>
-    <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.REAL_GET_TASKS" />
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
+
 </manifest>
