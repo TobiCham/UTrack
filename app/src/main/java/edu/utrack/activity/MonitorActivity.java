@@ -1,15 +1,11 @@
 package edu.utrack.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import edu.utrack.database.table.EventTable;
-import edu.utrack.database.table.Table;
 import edu.utrack.monitor.MonitorConnection;
 import edu.utrack.monitor.MonitorService;
 import edu.utrack.settings.AppSettings;
-import edu.utrack.settings.HistorySettingType;
 
 /**
  * Created by Tobi on 29/03/2018.
@@ -47,32 +43,12 @@ public abstract class MonitorActivity extends TrackActivity {
     private void internalConnected() {
         AppSettings settings = getSettings();
 
-        //Time since last deleted old data
-        long timeElapsed = System.currentTimeMillis() - settings.lastDeletionTime;
 
-        //One day
-        if(timeElapsed > 24 * 60 * 60 * 1000) {
-            deleteOldData();
-        }
 
         onConnected();
     }
 
-    public void deleteOldData() {
 
-        System.out.println("Deleting old data...");
-        HistorySettingType historySettingType = getSettings().historySetting;
-        if(historySettingType == null) return;
-
-        long historyDuration = historySettingType.getDays() * 24 * 60 * 60 * 1000;
-        long startTime = System.currentTimeMillis() - historyDuration;
-
-        for(Table table : connection.getDatabase().getTables()) {
-            if(table instanceof EventTable) ((EventTable) table).deleteOlderThan(startTime);
-        }
-        getSettings().lastDeletionTime = System.currentTimeMillis();
-        getSettings().save();
-    }
 
     public MonitorConnection getConnection() {
         return connection;

@@ -9,8 +9,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +20,6 @@ import java.util.Map;
 
 import edu.utrack.R;
 import edu.utrack.data.app.AppEvent;
-import edu.utrack.data.calendar.CalendarEvent;
 import edu.utrack.data.screen.ScreenEvent;
 import edu.utrack.data.screen.ScreenEventType;
 import edu.utrack.util.AppUtils;

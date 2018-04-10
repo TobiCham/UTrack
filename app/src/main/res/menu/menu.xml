@@ -12,6 +12,11 @@
         android:icon="@drawable/ic_close_white_24dp"
         app:showAsAction="always" />
 
+    <item android:id="@+id/menuReloading"
+        android:title="Reloading"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_sync_white_24dp" />
+
     <item android:id="@+id/menuReload"
         android:title="Reload"
         app:showAsAction="always"

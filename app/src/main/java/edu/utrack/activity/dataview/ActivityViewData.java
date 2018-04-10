@@ -39,6 +39,8 @@ public class ActivityViewData extends MonitorActivity {
     private ViewPager pager;
     private TabLayout tabLayout;
 
+    private boolean reloading = false;
+
     private List<DataViewFragment> fragments = new ArrayList<>();
 
     private static final DateFormat START_DATE_FORMAT = new SimpleDateFormat("dd/MM HH:mm");
@@ -92,7 +94,10 @@ public class ActivityViewData extends MonitorActivity {
     @Override
     public void getMenuItems(Map<Integer, Runnable> menus) {
         super.getMenuItems(menus);
-        menus.put(R.id.menuReload, this::updateData);
+
+        if(reloading) menus.put(R.id.menuReloading, null);
+        else menus.put(R.id.menuReload, this::updateData);
+
         menus.put(getEventExcluder().isEventExcluded(event) ? R.id.menuCross : R.id.menuCheck, this::changeExclusion);
     }
 
@@ -107,6 +112,9 @@ public class ActivityViewData extends MonitorActivity {
     }
 
     private void updateData() {
+        if(reloading) return;
+        reloading = true;
+
         setMessage("Loading Data...");
         setHistoricButtonEnabled(false);
         setContentVisible(false);
@@ -138,12 +146,12 @@ public class ActivityViewData extends MonitorActivity {
 
     private void updateUI(List<AppEvent> appEvents, Map<ScreenEventType, List<ScreenEvent>> screenEvents) {
         if(hasNoEvents(appEvents, screenEvents)) {
-            setMessage("No data has been found for this event.");
+            finishReload("No data has been found for this event.");
             return;
         }
         //Update UI
-        setMessage(null);
         setContentVisible(true);
+        finishReload(null);
 
         for(DataViewFragment fragment : fragments) fragment.updateUI(appEvents, screenEvents);
         setHistoricButtonEnabled(true);
@@ -165,6 +173,12 @@ public class ActivityViewData extends MonitorActivity {
         findViewById(R.id.eventViewPager).setVisibility(visible ? ViewPager.VISIBLE : ViewPager.INVISIBLE);
         findViewById(R.id.eventViewTabs).setEnabled(visible);
         if(visible) findViewById(R.id.eventViewTabs).setVisibility(TableLayout.VISIBLE);
+    }
+
+    private void finishReload(String message) {
+        setMessage(message);
+        reloading = false;
+        invalidateOptionsMenu();
     }
 
     private void setMessage(String msg) {

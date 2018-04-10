@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -22,13 +21,15 @@ import edu.utrack.activity.dataview.ActivityViewData;
 import edu.utrack.data.calendar.CalendarData;
 import edu.utrack.data.calendar.CalendarEvent;
 import edu.utrack.settings.AppSettings;
-import edu.utrack.settings.EventExcluder;
+import edu.utrack.util.AppUtils;
 
 /**
  * Created by Tobi on 24/03/2018.
  */
 
 public class ActivitySelectEvent extends TrackActivity {
+
+    private boolean reloading = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,7 +52,9 @@ public class ActivitySelectEvent extends TrackActivity {
     @Override
     public void getMenuItems(Map<Integer, Runnable> menus) {
         super.getMenuItems(menus);
-        menus.put(R.id.menuReload, this::updateCalendar);
+
+        if(reloading) menus.put(R.id.menuReloading, null);
+        else menus.put(R.id.menuReload, this::updateCalendar);
     }
 
     private void eventClicked(TextView view, CalendarEvent event) {
@@ -61,6 +64,9 @@ public class ActivitySelectEvent extends TrackActivity {
     }
 
     private void updateCalendar() {
+        if(reloading) return;
+        reloading = true;
+
         AppSettings settings = getSettings();
         int calendarID = settings.currentCalendarID;
 
@@ -68,11 +74,13 @@ public class ActivitySelectEvent extends TrackActivity {
         layout.removeAllViews();
 
         if(calendarID < 0) {
-            setMessage("No Calendar is selected.\nGo to the settings menu to select a calendar");
+            finishReload("No Calendar is selected.\nGo to the settings menu to select a calendar");
             return;
         }
 
         setMessage("Loading Events...");
+        invalidateOptionsMenu();
+
         ((LinearLayout) findViewById(R.id.calendarLayoutList)).removeAllViews();
 
         new Thread(() -> getCalendarHelper().requestCalendars(this::onGetCalendars)).start();
@@ -80,7 +88,7 @@ public class ActivitySelectEvent extends TrackActivity {
 
     private void onGetCalendars(List<CalendarData> calendars) {
         if(calendars == null) {
-            runOnUiThread(() -> setMessage("You must allow this app to access your calendar!"));
+            finishReload("You must allow this app to access your calendar!");
             return;
         }
         int id = getSettings().currentCalendarID;
@@ -90,14 +98,15 @@ public class ActivitySelectEvent extends TrackActivity {
                 return;
             }
         }
-        setMessage("The Calendar used no longer exists. Please select a different calendar in settings.");
+        finishReload("The Calendar used no longer exists. Please select a different calendar in settings.");
+
         getSettings().currentCalendarID = -1;
         getSettings().save();
     }
 
     private void onGetEvents(List<CalendarEvent> events) {
         if(events == null) {
-            runOnUiThread(() -> setMessage("You must allow this app to access your calendar events!"));
+            finishReload("You must allow this app to access your calendar events!");
             return;
         }
         List<CalendarEvent> newEvents = new ArrayList<>();
@@ -113,17 +122,22 @@ public class ActivitySelectEvent extends TrackActivity {
 
     private void updateEvents(List<CalendarEvent> events) {
         if(events.isEmpty()) {
-            setMessage("No calendar events on that calendar!");
+            finishReload("No calendar events on that calendar!");
             return;
         }
         LinearLayout layout = findViewById(R.id.calendarLayoutList);
-        layout.removeAllViews();
 
         for(int i = 0; i < events.size(); i++) {
             CalendarEvent event = events.get(i);
             layout.addView(createText(event, i % 2 == 0));
         }
-        setMessage("Select an event");
+        finishReload("Select an event");
+    }
+
+    private void finishReload(String message) {
+        setMessage("No calendar events on that calendar!");
+        reloading = false;
+        invalidateOptionsMenu();
     }
 
     private TextView createText(CalendarEvent event, boolean dark) {
@@ -134,7 +148,7 @@ public class ActivitySelectEvent extends TrackActivity {
         txt += "\n" + startFormat.format(new Date(event.getStartTime())) + ", " + startFormat.format(new Date(event.getEndTime()));
         view.setText(txt);
         view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        view.setPadding(getPaddingPX(5), getPaddingPX(8), getPaddingPX(8), 0);
+        view.setPadding(AppUtils.getPaddingPX(this, 5), AppUtils.getPaddingPX(this, 8), AppUtils.getPaddingPX(this, 8), 0);
         setTextBackground(dark, view, event);
 
         view.setOnClickListener((e) -> eventClicked(view, event));
@@ -148,10 +162,6 @@ public class ActivitySelectEvent extends TrackActivity {
         } else {
             view.setBackgroundColor(Color.parseColor(excluded ? "#FFEFEF" : "#EEEEFF"));
         }
-    }
-
-    private int getPaddingPX(int dp) {
-        return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
     }
 
     private void setMessage(String msg) {

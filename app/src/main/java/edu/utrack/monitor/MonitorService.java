@@ -6,9 +6,6 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import java.io.File;
-import java.sql.SQLOutput;
-
 import edu.utrack.activity.TrackActivity;
 import edu.utrack.data.app.AppData;
 import edu.utrack.data.app.AppEvent;
@@ -20,7 +17,7 @@ import edu.utrack.database.table.Table;
 import edu.utrack.monitor.app.ActivityMonitor;
 import edu.utrack.monitor.screen.PhoneScreenListener;
 import edu.utrack.settings.AppSettings;
-import edu.utrack.util.AppUtils;
+import edu.utrack.settings.HistorySettingType;
 
 /**
  * Created by Tobi on 26/02/2018.
@@ -38,8 +35,6 @@ public class MonitorService extends Service {
     private ActivityMonitor monitor;
     private Thread saveThread;
     private Database database;
-
-
 
     @Nullable
     @Override
@@ -82,16 +77,21 @@ public class MonitorService extends Service {
         }
     }
 
-    public void refreshSettings() {
-        settings = null;
-    }
-
-    public boolean doesTrack() {
+    private AppSettings getSettings() {
         if(settings == null) {
             settings = new AppSettings(TrackActivity.getSettingsFile(this));
             settings.load();
         }
-        return settings.tracks;
+        return settings;
+    }
+
+    public void refreshSettings() {
+        settings = null;
+    }
+
+
+    public boolean doesTrack() {
+        return getSettings().tracks;
     }
 
     private void activityChanged(ForegroundAppInfo from, ForegroundAppInfo to, long startTime, long time) {
@@ -132,7 +132,33 @@ public class MonitorService extends Service {
                 ((EventTable) table).saveCache();
             }
         }
+
+        //Time since last deleted old data
+        long timeElapsed = System.currentTimeMillis() - settings.lastDeletionTime;
+
+        //One day
+        if(timeElapsed > 24 * 60 * 60 * 1000) {
+            deleteOldData();
+        }
+
         if(saved) System.out.println("Saved!");
+    }
+
+    public void deleteOldData() {
+        if(database == null) return;
+
+        System.out.println("Deleting old data...");
+        HistorySettingType historySettingType = getSettings().historySetting;
+        if(historySettingType == null) return;
+
+        long historyDuration = historySettingType.getDays() * 24 * 60 * 60 * 1000;
+        long startTime = System.currentTimeMillis() - historyDuration;
+
+        for(Table table : database.getTables()) {
+            if(table instanceof EventTable) ((EventTable) table).deleteOlderThan(startTime);
+        }
+        getSettings().lastDeletionTime = System.currentTimeMillis();
+        getSettings().save();
     }
 
     public Database getDatabase() {

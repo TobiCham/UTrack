@@ -7,7 +7,6 @@ import android.content.Intent;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.utrack.activity.MainActivity;
 import edu.utrack.data.screen.ScreenEvent;
 import edu.utrack.data.screen.ScreenEventType;
 import edu.utrack.monitor.MonitorService;

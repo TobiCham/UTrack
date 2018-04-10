@@ -1,7 +1,5 @@
 package edu.utrack.monitor.app;
 
-import java.util.Objects;
-
 import edu.utrack.data.app.ForegroundAppInfo;
 import edu.utrack.monitor.MonitorService;
 
