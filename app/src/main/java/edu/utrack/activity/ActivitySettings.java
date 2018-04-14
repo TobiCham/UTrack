@@ -24,7 +24,7 @@ public class ActivitySettings extends MonitorActivity {
 
     @Override
     public void onDisconnected() {
-        if(getConnection() != null) {
+        if(getConnection() != null && getConnection().isConnected()) {
             getConnection().getService().refreshSettings();
         } else {
             new Exception("CONNECTION IS NULL RIP").printStackTrace();

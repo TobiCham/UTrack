@@ -2,6 +2,8 @@ package edu.utrack.activity.dataview;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Html;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +17,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import edu.utrack.R;
+import edu.utrack.data.app.AppData;
 import edu.utrack.data.app.AppEvent;
 import edu.utrack.data.screen.ScreenEvent;
 import edu.utrack.data.screen.ScreenEventType;
 import edu.utrack.util.AppUtils;
+import edu.utrack.util.TimeUtils;
 
 /**
  * Created by Tobi on 29/03/2018.
@@ -31,7 +37,7 @@ import edu.utrack.util.AppUtils;
 public class FragmentDataSummary extends DataViewFragment {
 
     //1 = startTime, -1 = -startTime, 2 = appname, -2 = -appname, 3 = duration, 3 = -duration
-    private int sortDirection = 0;
+    private int sortDirection = -1;
     private List<AppEvent> appEvents = new ArrayList<>();
     private Map<String, String> appNames = new HashMap<>();
 
@@ -57,12 +63,25 @@ public class FragmentDataSummary extends DataViewFragment {
         ((TextView) getView().findViewById(R.id.summaryScreenOnTotal)).setText(Integer.toString(screenEvents.get(ScreenEventType.ON).size()));
         ((TextView) getView().findViewById(R.id.summaryUnlockTotal)).setText(Integer.toString(screenEvents.get(ScreenEventType.UNLOCK).size()));
 
+        long totalTime = 0;
+
+        Set<AppData> apps = new HashSet<>();
+
         this.appEvents = appEvents;
         this.appNames.clear();
         for(AppEvent appEvent : appEvents) {
             String pName = appEvent.getApp().getPackageName();
             if(!appNames.containsKey(pName)) appNames.put(pName, AppUtils.getAppName(pName, getActivity()));
+
+            totalTime += appEvent.getDuration(event);
+            apps.add(appEvent.getApp());
         }
+        totalTime = totalTime / 1000;
+        int uniqueApps = apps.size();
+
+        ((TextView) getView().findViewById(R.id.summaryUniqueAppsText)).setText(uniqueApps + "");
+        ((TextView) getView().findViewById(R.id.summaryAppTimeText)).setText(TimeUtils.formatSecondsShort((int) totalTime) + "");
+
         sortEvents();
         updateEvents();
     }
@@ -98,32 +117,11 @@ public class FragmentDataSummary extends DataViewFragment {
             TableRow row = new TableRow(getActivity());
             row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
 
-            TextView appText = new TextView(getActivity());
-            appText.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
+            TextView appText = createTableText(appNames.get(event.getApp().getPackageName()));
+            TextView startTimeText = createTableText(START_DATE_FORMAT.format(new Date(event.getStartTime(this.event))));
 
-            String name = appNames.get(event.getApp().getPackageName());
-            appText.setText(name);
-
-            TextView startTimeText = new TextView(getActivity());
-            startTimeText.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
-            startTimeText.setPadding(AppUtils.getPaddingPX(getActivity(), 20), 0, 0, 0);
-            startTimeText.setText(START_DATE_FORMAT.format(new Date(event.getStartTime(this.event))));
-
-            TextView durationText = new TextView(getActivity());
-            durationText.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
-            durationText.setPadding(AppUtils.getPaddingPX(getActivity(), 20), 0, 0, 0);
-
-            int totalSeconds = (int) (event.getDuration(this.event) / 1000);
-            int seconds = totalSeconds % 60;
-            int minutes = totalSeconds / 60;
-            int hours = totalSeconds / (60 * 60);
-
-            String timeText = "";
-            if(hours > 0) timeText += hours + "h, ";
-            if(minutes > 0) timeText += minutes + "m, ";
-            timeText += seconds + "s";
-
-            durationText.setText(timeText);
+            int duration = (int) (event.getDuration(this.event) / 1000);
+            TextView durationText = createTableText(TimeUtils.formatSecondsShort(duration));
 
             appText.setOnClickListener((v) -> changeSortDirection(2));
             startTimeText.setOnClickListener((v) -> changeSortDirection(1));
@@ -134,5 +132,19 @@ public class FragmentDataSummary extends DataViewFragment {
             row.addView(durationText);
             tableLayout.addView(row);
         }
+    }
+
+    private TextView createTableText(String txt) {
+        TextView view = new TextView(getActivity());
+
+        TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        params.weight = 1;
+        params.gravity = Gravity.CENTER_HORIZONTAL;
+
+        view.setLayoutParams(params);
+        view.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        view.setText(txt);
+        return view;
     }
 }

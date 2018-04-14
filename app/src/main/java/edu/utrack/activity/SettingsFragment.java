@@ -108,6 +108,22 @@ public class SettingsFragment extends PreferenceFragment {
         categoryGeneral.addPreference(preferenceHistory);
         categoryGeneral.addPreference(preferenceTracking);
 
+        PreferenceCategory categoryDev = new PreferenceCategory(getActivity());
+        categoryDev.setTitle("Developer");
+        screen.addPreference(categoryDev);
+
+        SwitchPreference preferenceDev = new SwitchPreference(getActivity());
+        preferenceDev.setChecked(settings.developer);
+        preferenceDev.setTitle("Enable Developer");
+        preferenceDev.setSummary("Enables developer mode. Only used for testing");
+        preferenceDev.setOnPreferenceChangeListener((p, v) -> {
+            settings.developer = (boolean) v;
+            onSettingChanged(settings);
+            return true;
+        });
+        categoryDev.addPreference(preferenceDev);
+
+
         setPreferenceScreen(screen);
     }
 

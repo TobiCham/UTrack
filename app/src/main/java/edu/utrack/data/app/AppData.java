@@ -1,12 +1,10 @@
 package edu.utrack.data.app;
 
-import android.support.annotation.NonNull;
-
 /**
  * Created by Tobi on 07/03/2018.
  */
 
-public class AppData implements Comparable<AppData> {
+public class AppData {
 
     private int id;
     private String packageName;
@@ -45,10 +43,5 @@ public class AppData implements Comparable<AppData> {
         sb.append(", packageName='").append(packageName).append('\'');
         sb.append('}');
         return sb.toString();
-    }
-
-    @Override
-    public int compareTo(@NonNull AppData o) {
-        return Integer.compare(id, o.id);
     }
 }

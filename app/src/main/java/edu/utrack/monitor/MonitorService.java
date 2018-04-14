@@ -134,7 +134,7 @@ public class MonitorService extends Service {
         }
 
         //Time since last deleted old data
-        long timeElapsed = System.currentTimeMillis() - settings.lastDeletionTime;
+        long timeElapsed = System.currentTimeMillis() - getSettings().lastDeletionTime;
 
         //One day
         if(timeElapsed > 24 * 60 * 60 * 1000) {

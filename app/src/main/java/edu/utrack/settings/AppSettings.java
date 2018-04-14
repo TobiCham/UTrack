@@ -15,6 +15,7 @@ public class AppSettings {
     public boolean tracks = true;
     public HistorySettingType historySetting = HistorySettingType.FOUR_WEEKS;
     public long lastDeletionTime = -1;
+    public boolean developer = false;
 
     public AppSettings(File saveFile) {
         this.saveFile = saveFile;
@@ -29,6 +30,7 @@ public class AppSettings {
         section.set("track", tracks);
         section.set("history-type", historySetting.toString());
         section.set("last-deletion-time", lastDeletionTime);
+        section.set("developer", developer);
         try {
             section.write(saveFile);
         } catch (FileNotFoundException e) {
@@ -51,6 +53,7 @@ public class AppSettings {
         historySetting = HistorySettingType.fromName(section.getString("history-type"));
         if(historySetting == null) historySetting = HistorySettingType.FOUR_WEEKS;
         lastDeletionTime = section.contains("last-deletion-time") ? section.getLong("last-deletion-time") : -1;
+        developer = section.contains("developer") ? section.getBoolean("developer") : false;
     }
 
     private File getFile() {

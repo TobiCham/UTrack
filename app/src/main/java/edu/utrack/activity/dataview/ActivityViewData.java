@@ -87,7 +87,11 @@ public class ActivityViewData extends MonitorActivity {
 
         tabLayout = findViewById(R.id.eventViewTabs);
         tabLayout.setupWithViewPager(pager);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         updateData();
     }
 
@@ -112,14 +116,16 @@ public class ActivityViewData extends MonitorActivity {
     }
 
     private void updateData() {
+
+        if(getConnection() == null || !getConnection().isConnected()) return;
+
         if(reloading) return;
         reloading = true;
 
         setMessage("Loading Data...");
         setHistoricButtonEnabled(false);
         setContentVisible(false);
-
-        if(getConnection() == null || !getConnection().isConnected()) return;
+        invalidateOptionsMenu();
 
         Database db = getConnection().getDatabase();
         new Thread(() -> {
@@ -145,6 +151,7 @@ public class ActivityViewData extends MonitorActivity {
     }
 
     private void updateUI(List<AppEvent> appEvents, Map<ScreenEventType, List<ScreenEvent>> screenEvents) {
+        System.out.println("update UI!!!");
         if(hasNoEvents(appEvents, screenEvents)) {
             finishReload("No data has been found for this event.");
             return;

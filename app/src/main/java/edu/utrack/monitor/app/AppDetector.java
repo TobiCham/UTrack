@@ -99,7 +99,10 @@ public class AppDetector {
 
     private void requestUsageStatsPermission() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !hasUsageStatsPermission(context)) {
-            context.startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            context.startActivity(intent);
         }
     }
 

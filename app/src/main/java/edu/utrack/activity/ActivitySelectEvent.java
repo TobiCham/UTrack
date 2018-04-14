@@ -115,7 +115,10 @@ public class ActivitySelectEvent extends TrackActivity {
         }
         Collections.sort(newEvents, (e1, e2) -> Long.compare(e1.getStartTime(), e2.getStartTime()) * -1);
 
-        //newEvents.add(0, new CalendarEvent(new CalendarData(-1, "test@test.com", "test", "test"), -1, "All of Time Event", "????", 0, Long.MAX_VALUE));
+        if(getSettings().developer) {
+            newEvents.add(0, new CalendarEvent(new CalendarData(-1, "test@test.com", "test", "test"), -1, "All of Time Event", "????", 0, Long.MAX_VALUE));
+            newEvents.add(1, new CalendarEvent(new CalendarData(-1, "test@test.com", "test", "test"), -2, "Past 24 hrs", "???", System.currentTimeMillis() - (24 * 60 * 60 * 1000), System.currentTimeMillis()));
+        }
 
         runOnUiThread(() -> updateEvents(newEvents));
     }
@@ -135,7 +138,7 @@ public class ActivitySelectEvent extends TrackActivity {
     }
 
     private void finishReload(String message) {
-        setMessage("No calendar events on that calendar!");
+        setMessage(message);
         reloading = false;
         invalidateOptionsMenu();
     }
@@ -145,7 +148,7 @@ public class ActivitySelectEvent extends TrackActivity {
 
         TextView view = new TextView(this);
         String txt = event.getTitle() + ": " + event.getLocation();
-        txt += "\n" + startFormat.format(new Date(event.getStartTime())) + ", " + startFormat.format(new Date(event.getEndTime()));
+        txt += "\n" + startFormat.format(new Date(event.getStartTime())) + " - " + startFormat.format(new Date(event.getEndTime()));
         view.setText(txt);
         view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         view.setPadding(AppUtils.getPaddingPX(this, 5), AppUtils.getPaddingPX(this, 8), AppUtils.getPaddingPX(this, 8), 0);
