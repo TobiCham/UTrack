@@ -40,7 +40,11 @@ public abstract class EventTable<T> extends Table {
         return list;
     }
 
-    public abstract List<T> getEvents(CalendarEvent event);
+    public abstract List<T> getEventsBetween(long start, long end);
+
+    public List<T> getEvents(CalendarEvent event) {
+        return getEventsBetween(event.getStartTime(), event.getEndTime());
+    }
 
     protected abstract void writeValue(T data);
 

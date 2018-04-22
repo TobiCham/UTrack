@@ -27,14 +27,13 @@ public class ActivitySettings extends MonitorActivity {
         if(getConnection() != null && getConnection().isConnected()) {
             getConnection().getService().refreshSettings();
         } else {
-            new Exception("CONNECTION IS NULL RIP").printStackTrace();
+            System.err.println("Connection is null, can't save settings");
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        System.out.println("SETTINGS STOP");
     }
 
     @Override

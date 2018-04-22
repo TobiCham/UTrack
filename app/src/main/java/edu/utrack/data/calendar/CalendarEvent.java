@@ -2,11 +2,13 @@ package edu.utrack.data.calendar;
 
 import java.util.Objects;
 
+import edu.utrack.util.DataClass;
+
 /**
  * Created by Tobi on 07/03/2018.
  */
 
-public class CalendarEvent {
+public class CalendarEvent extends DataClass {
 
     private CalendarData calendar;
     private int id;
@@ -46,38 +48,19 @@ public class CalendarEvent {
         return end;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CalendarEvent event = (CalendarEvent) o;
-
-        if(id != event.id || start != event.start || end != event.end) return false;
-        return Objects.equals(calendar, event.calendar) && Objects.equals(title, event.title) && Objects.equals(location, event.location);
+    public long getDuration() {
+        long time = end - start;
+        if(time < 0) return 0;
+        return time;
     }
 
     @Override
-    public int hashCode() {
-        int result = calendar.hashCode();
-        result = 47 * result + id;
-        result = 47 * result + title.hashCode();
-        result = 47 * result + location.hashCode();
-        result = 47 * result + (int) (start ^ (start >>> 32));
-        result = 47 * result + (int) (end ^ (end >>> 32));
-        return result;
+    protected String[] getFieldNames() {
+        return new String[] {"id", "calendar", "title", "location", "start", "end"};
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("CalendarEvent{");
-        sb.append("calendar=").append(calendar);
-        sb.append(", id=").append(id);
-        sb.append(", title='").append(title).append('\'');
-        sb.append(", location='").append(location).append('\'');
-        sb.append(", start=").append(start);
-        sb.append(", end=").append(end);
-        sb.append('}');
-        return sb.toString();
+    protected Object[] getFields() {
+        return new Object[] {id, calendar, title, location, start, end};
     }
 }

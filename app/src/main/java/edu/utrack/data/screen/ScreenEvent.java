@@ -2,11 +2,13 @@ package edu.utrack.data.screen;
 
 import android.support.annotation.NonNull;
 
+import edu.utrack.util.DataClass;
+
 /**
  * Created by Tobi on 26/02/2018.
  */
 
-public class ScreenEvent implements Comparable<ScreenEvent> {
+public class ScreenEvent extends DataClass implements Comparable<ScreenEvent> {
 
     private ScreenEventType type;
     private long timeStamp;
@@ -29,28 +31,13 @@ public class ScreenEvent implements Comparable<ScreenEvent> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ScreenEvent screenEvent = (ScreenEvent) o;
-        return timeStamp == screenEvent.timeStamp && type == screenEvent.type;
+    protected Object[] getFields() {
+        return new Object[] {type, timeStamp};
     }
 
     @Override
-    public int hashCode() {
-        int result = type.hashCode();
-        result = 53 * result + (int) (timeStamp ^ (timeStamp >>> 32));
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("ScreenEvent{");
-        sb.append("type=").append(type);
-        sb.append(", timeStamp=").append(timeStamp);
-        sb.append('}');
-        return sb.toString();
+    protected String[] getFieldNames() {
+        return new String[] {"type", "time"};
     }
 
     @Override

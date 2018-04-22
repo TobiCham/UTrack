@@ -14,6 +14,7 @@ import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +33,6 @@ public class CalendarHelper {
     private int callbackCounter;
     private Map<Integer, Pair<CalendarCallback, Object>> callbacks = new HashMap<>();
 
-    //7 weeks
-    private static final long TIME_DIFFERENCE = 4L * 7L * 24L * 60L * 60L * 1000L;
-
     public CalendarHelper(Activity activity) {
         this.activity = activity;
     }
@@ -45,9 +43,9 @@ public class CalendarHelper {
         }
     }
 
-    public synchronized void requestEvents(CalendarData calendar, CalendarEventCallback callback) {
-       if(checkPermission(callback, new Object[] {calendar, TIME_DIFFERENCE, TIME_DIFFERENCE})) {
-           callback.onReceived(queryEvents(calendar, TIME_DIFFERENCE, TIME_DIFFERENCE));
+    public synchronized void requestEvents(CalendarData calendar, long start, long end, CalendarEventCallback callback) {
+       if(checkPermission(callback, new Object[] {calendar, start, end})) {
+           callback.onReceived(queryEvents(calendar, start, end));
        }
     }
 
@@ -62,7 +60,7 @@ public class CalendarHelper {
      * Be careful using this method - if the app does not have permission, an exception will be thrown
      * @return a list of all calendars
      */
-    public List<CalendarData> queryCalendars() {
+    private List<CalendarData> queryCalendars() {
         ContentResolver contentResolver = activity.getContentResolver();
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
         String[] qry = {
@@ -84,12 +82,11 @@ public class CalendarHelper {
     }
 
     /**
-     * Be careful using this method - if the app does not have permission, an exception will be thrown
-     * @param begin Minimum time to start getting events from - as an offset from the current time
-     * @param end Maximum time to get events from - as an offset from the current time
+     * @param begin Minimum time to start getting events from
+     * @param end Maximum time to get events from
      * @return A list of Calendar events in the specified time frame
      */
-    public List<CalendarEvent> queryEvents(CalendarData calendar, long begin, long end) {
+    private List<CalendarEvent> queryEvents(CalendarData calendar, long begin, long end) {
         ContentResolver contentResolver = activity.getContentResolver();
         Uri uri = CalendarContract.Events.CONTENT_URI;
 
@@ -101,13 +98,9 @@ public class CalendarHelper {
             CalendarContract.Events.DTEND
         };
 
-        long currentTime = System.currentTimeMillis();
-        long startTime = begin >= 0 ? currentTime - begin : 0;
-        long endTime = end >= 0 ? currentTime + end : Long.MAX_VALUE;
-
         String selection = "(" + CalendarContract.Events.CALENDAR_ID + "=? AND " + CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTEND + " <= ?)";
         @SuppressLint("MissingPermission")
-        Cursor cursor = contentResolver.query(uri, qry, selection, new String[] {calendar.getDBID() + "", startTime + "", endTime + ""}, null);
+        Cursor cursor = contentResolver.query(uri, qry, selection, new String[] {calendar.getDBID() + "", begin + "", end + ""}, null);
         List<CalendarEvent> events = new ArrayList<>();
 
         while(cursor.moveToNext()) {

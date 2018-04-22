@@ -12,27 +12,13 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/eventViewToolbar"
+            android:id="@+id/goalsToolbar"
             android:elevation="4dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/eventViewInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:paddingBottom="8dp"
-            android:paddingLeft="24dp"
-            android:paddingRight="8dp"
-            android:paddingTop="4dp"
-            android:text="Test Event, 1W\n10:05 - 11:15"
-            android:textColor="#FFFFFF"
-            android:textSize="16dp"
-            android:textStyle="bold" />
-
         <android.support.design.widget.TabLayout
-            android:id="@+id/eventViewTabs"
+            android:id="@+id/goalsTabs"
             app:tabMode="fixed"
             app:tabGravity="fill"
             android:visibility="gone"
@@ -53,16 +39,16 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/eventViewMessage"
+            android:id="@+id/goalsMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Loading Data..."
+            android:text="Loading Goals..."
             android:textSize="16dp"
             android:textStyle="bold"
             android:visibility="visible" />
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/eventViewPager"
+            android:id="@+id/goalsPager"
             android:visibility="invisible"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_weight="1"
@@ -74,6 +60,7 @@
             android:layout_height="10dp" />
 
         <LinearLayout
+            android:id="@+id/goalsLayoutTrophies"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
@@ -81,16 +68,38 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-                <Button
-                    android:id="@+id/eventViewButtonHistoricData"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="bottom"
-                    android:enabled="false"
-                    android:text="View Historic Data" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:textStyle="bold"
+                        android:textSize="20dp"
+                        android:text="Trophies:   " />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        app:srcCompat="@drawable/trophy" />
+
+                    <TextView
+                        android:id="@+id/goalsTrophyPoints"
+                        android:layout_alignParentRight="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:textStyle="bold"
+                        android:textSize="20dp"
+                        android:text="x5" />
+
+                </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>

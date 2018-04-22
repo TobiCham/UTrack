@@ -80,7 +80,7 @@ public class FragmentDataSummary extends DataViewFragment {
         int uniqueApps = apps.size();
 
         ((TextView) getView().findViewById(R.id.summaryUniqueAppsText)).setText(uniqueApps + "");
-        ((TextView) getView().findViewById(R.id.summaryAppTimeText)).setText(TimeUtils.formatSecondsShort((int) totalTime) + "");
+        ((TextView) getView().findViewById(R.id.summaryAppTimeText)).setText(TimeUtils.formatTimeShort((int) totalTime) + "");
 
         sortEvents();
         updateEvents();
@@ -121,7 +121,7 @@ public class FragmentDataSummary extends DataViewFragment {
             TextView startTimeText = createTableText(START_DATE_FORMAT.format(new Date(event.getStartTime(this.event))));
 
             int duration = (int) (event.getDuration(this.event) / 1000);
-            TextView durationText = createTableText(TimeUtils.formatSecondsShort(duration));
+            TextView durationText = createTableText(TimeUtils.formatTimeShort(duration));
 
             appText.setOnClickListener((v) -> changeSortDirection(2));
             startTimeText.setOnClickListener((v) -> changeSortDirection(1));

@@ -97,8 +97,6 @@ public class MonitorService extends Service {
     private void activityChanged(ForegroundAppInfo from, ForegroundAppInfo to, long startTime, long time) {
         if(database == null) return;
 
-        System.out.println("ACTIVITY CHANGED: " + from + " -> " + to);
-
         //Gets the app data for the app which was running (or creates if doesn't already exist - that's important!)
         AppData data = database.getAppsTable().getOrCreateAppData(from.getPackageName());
         database.getAppEventsTable().insertData(new AppEvent(data, startTime, startTime + time));
@@ -140,14 +138,19 @@ public class MonitorService extends Service {
         if(timeElapsed > 24 * 60 * 60 * 1000) {
             deleteOldData();
         }
-
-        if(saved) System.out.println("Saved!");
     }
 
     public void deleteOldData() {
         if(database == null) return;
 
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         System.out.println("Deleting old data...");
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
         HistorySettingType historySettingType = getSettings().historySetting;
         if(historySettingType == null) return;
 

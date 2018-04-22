@@ -48,27 +48,57 @@ public class AppEventsTable extends EventTable<AppEvent> {
     }
 
     @Override
-    public List<AppEvent> getEvents(CalendarEvent event) {
+    public List<AppEvent> getEventsBetween(long start, long end) {
         String sql = "SELECT `{a}`.*, `{u}`.`start_time`, `{u}`.`end_time` FROM `{u}` INNER JOIN `{a}` ON `{u}`.`app` = `{a}`.`id` " +
-                     "WHERE `{u}`.`start_time` <= ? AND `{u}`.`end_time` >= ?";
+                "WHERE `{u}`.`start_time` <= ? AND `{u}`.`end_time` >= ?";
         sql = sql.replace("{u}", getTableName());
         sql = sql.replace("{a}", database.getAppsTable().getTableName());
 
         String[] sqlData = {
-            Long.toString(event.getEndTime()),
-            Long.toString(event.getStartTime())
+            Long.toString(end),
+            Long.toString(start)
         };
 
         Cursor cursor = getReadableDB().rawQuery(sql, sqlData);
 
         List<AppEvent> events = new ArrayList<>();
         for(AppEvent appEvent: readValues(cursor)) {
-            if(appEvent.getDuration(event) != 0) events.add(appEvent);
+            if(appEvent.getDuration(start, end) != 0) events.add(appEvent);
         }
         for(AppEvent appEvent : getToSaveData()) {
-            if(appEvent.getDuration(event) != 0) events.add(appEvent);
+            if(appEvent.getDuration(start, end) != 0) events.add(appEvent);
         }
         return new ArrayList<>(events);
+    }
+
+    private boolean isValidEvent(AppEvent event, List<CalendarEvent> calendarEvents) {
+        for(CalendarEvent cal : calendarEvents) {
+            if(event.getDuration(cal) > 0) return true;
+        }
+        return false;
+    }
+
+    public List<AppEvent> getEvents(List<CalendarEvent> events) {
+        List<AppEvent> newEvents = new ArrayList<>();
+
+        if(!events.isEmpty()) {
+            String sql = "SELECT `{a}`.*, `{u}`.`start_time`, `{u}`.`end_time` FROM `{u}` INNER JOIN `{a}` ON `{u}`.`app` = `{a}`.`id` WHERE";
+
+            for (int i = 0; i < events.size(); i++) {
+                sql += " ";
+                if(i != 0) sql += "OR ";
+                sql += "(`{u}`.`start_time` <= " + events.get(i).getEndTime() + " AND `{u}`.`end_time` >= " + events.get(i).getStartTime() + ")";
+            }
+            sql = sql.replace("{u}", getTableName());
+            sql = sql.replace("{a}", database.getAppsTable().getTableName());
+
+            Cursor cursor = getReadableDB().rawQuery(sql, null);
+            newEvents.addAll(readValues(cursor));
+        }
+        for(AppEvent event : getToSaveData()) {
+            if(isValidEvent(event, events)) newEvents.add(event);
+        }
+        return newEvents;
     }
 
     //TODO Do this

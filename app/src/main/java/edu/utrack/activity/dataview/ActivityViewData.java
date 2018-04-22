@@ -22,6 +22,8 @@ import java.util.Map;
 
 import edu.utrack.R;
 import edu.utrack.activity.MonitorActivity;
+import edu.utrack.activity.Reloader;
+import edu.utrack.activity.ReloadingActivity;
 import edu.utrack.data.app.AppEvent;
 import edu.utrack.data.calendar.CalendarEvent;
 import edu.utrack.data.screen.ScreenEvent;
@@ -33,13 +35,10 @@ import edu.utrack.settings.EventExcluder;
  * Created by Tobi on 24/03/2018.
  */
 
-public class ActivityViewData extends MonitorActivity {
+public class ActivityViewData extends MonitorActivity implements ReloadingActivity {
 
     private CalendarEvent event;
-    private ViewPager pager;
-    private TabLayout tabLayout;
-
-    private boolean reloading = false;
+    private Reloader reloader;
 
     private List<DataViewFragment> fragments = new ArrayList<>();
 
@@ -60,7 +59,7 @@ public class ActivityViewData extends MonitorActivity {
 
         for(DataViewFragment fragment : fragments) fragment.setEvent(event);
 
-        pager = findViewById(R.id.eventViewPager);
+        ViewPager pager = findViewById(R.id.eventViewPager);
         pager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
 
             @Override
@@ -80,27 +79,27 @@ public class ActivityViewData extends MonitorActivity {
             }
         });
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.eventViewToolbar);
         toolbar.setTitle("Details");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        tabLayout = findViewById(R.id.eventViewTabs);
+        TabLayout tabLayout = findViewById(R.id.eventViewTabs);
         tabLayout.setupWithViewPager(pager);
+
+        reloader = new Reloader(this, this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        updateData();
+        reloader.reload();
     }
 
     @Override
     public void getMenuItems(Map<Integer, Runnable> menus) {
         super.getMenuItems(menus);
-
-        if(reloading) menus.put(R.id.menuReloading, null);
-        else menus.put(R.id.menuReload, this::updateData);
+        reloader.addMenuItems(menus);
 
         menus.put(getEventExcluder().isEventExcluded(event) ? R.id.menuCross : R.id.menuCheck, this::changeExclusion);
     }
@@ -112,22 +111,18 @@ public class ActivityViewData extends MonitorActivity {
 
     @Override
     public void onConnected() {
-        updateData();
+        reloader.reload();
     }
 
-    private void updateData() {
-
-        if(getConnection() == null || !getConnection().isConnected()) return;
-
-        if(reloading) return;
-        reloading = true;
-
-        setMessage("Loading Data...");
+    @Override
+    public void handleReload() {
         setHistoricButtonEnabled(false);
-        setContentVisible(false);
-        invalidateOptionsMenu();
 
         Database db = getConnection().getDatabase();
+        if(db == null) {
+            reloader.finishReload("Unable to access database. Try again");
+            return;
+        }
         new Thread(() -> {
             List<AppEvent> appEvents = db.getAppEventsTable().getEvents(event);
             Map<ScreenEventType, List<ScreenEvent>> screenEvents = db.getScreenEventsTable().getScreenCounts(event);
@@ -151,16 +146,14 @@ public class ActivityViewData extends MonitorActivity {
     }
 
     private void updateUI(List<AppEvent> appEvents, Map<ScreenEventType, List<ScreenEvent>> screenEvents) {
-        System.out.println("update UI!!!");
         if(hasNoEvents(appEvents, screenEvents)) {
-            finishReload("No data has been found for this event.");
+            reloader.finishReload("No data has been found for this event.");
             return;
         }
-        //Update UI
-        setContentVisible(true);
-        finishReload(null);
-
         for(DataViewFragment fragment : fragments) fragment.updateUI(appEvents, screenEvents);
+
+        //Update UI
+        reloader.finishReload(null);
         setHistoricButtonEnabled(true);
     }
 
@@ -176,19 +169,20 @@ public class ActivityViewData extends MonitorActivity {
         findViewById(R.id.eventViewButtonHistoricData).setEnabled(enabled);
     }
 
-    private void setContentVisible(boolean visible) {
+    @Override
+    public void setContentVisible(boolean visible) {
         findViewById(R.id.eventViewPager).setVisibility(visible ? ViewPager.VISIBLE : ViewPager.INVISIBLE);
         findViewById(R.id.eventViewTabs).setEnabled(visible);
         if(visible) findViewById(R.id.eventViewTabs).setVisibility(TableLayout.VISIBLE);
     }
 
-    private void finishReload(String message) {
-        setMessage(message);
-        reloading = false;
-        invalidateOptionsMenu();
+    @Override
+    public String getReloadingMessage() {
+        return "Loading data...";
     }
 
-    private void setMessage(String msg) {
+    @Override
+    public void setMessage(String msg) {
         TextView view = findViewById(R.id.eventViewMessage);
         if(msg != null) {
             view.setText(msg);

@@ -3,12 +3,13 @@ package edu.utrack.data.app;
 import java.util.Objects;
 
 import edu.utrack.data.calendar.CalendarEvent;
+import edu.utrack.util.DataClass;
 
 /**
  * Created by Tobi on 07/03/2018.
  */
 
-public class AppEvent {
+public class AppEvent extends DataClass {
 
     private AppData app;
     private long startTime, endTime;
@@ -35,47 +36,41 @@ public class AppEvent {
         return getEndTime() - getStartTime();
     }
 
-    public long getStartTime(CalendarEvent event) {
-        if(startTime < event.getStartTime()) return event.getStartTime();
+    public long getStartTime(long begin, long end) {
+        if(startTime < begin) return begin;
         return startTime;
     }
 
-    public long getEndTime(CalendarEvent event) {
-        if(endTime > event.getEndTime()) return event.getEndTime();
+    public long getEndTime(long begin, long end) {
+        if(endTime > end) return end;
         return endTime;
     }
 
-    public long getDuration(CalendarEvent event) {
-        long time = getEndTime(event) - getStartTime(event);
+    public long getDuration(long begin, long end) {
+        long time = getEndTime(begin, end) - getStartTime(begin, end);
         if(time < 0) return 0;
         return time;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public long getStartTime(CalendarEvent event) {
+        return getStartTime(event.getStartTime(), event.getEndTime());
+    }
 
-        AppEvent appEvent = (AppEvent) o;
-        if(startTime != appEvent.startTime || endTime != appEvent.endTime) return false;
-        return Objects.equals(app, appEvent.app);
+    public long getEndTime(CalendarEvent event) {
+        return getEndTime(event.getStartTime(), event.getEndTime());
+    }
+
+    public long getDuration(CalendarEvent event) {
+        return getDuration(event.getStartTime(), event.getEndTime());
     }
 
     @Override
-    public int hashCode() {
-        int result = app.hashCode();
-        result = 37 * result + (int) (startTime ^ (startTime >>> 32));
-        result = 37 * result + (int) (endTime ^ (endTime >>> 32));
-        return result;
+    protected String[] getFieldNames() {
+        return new String[] {"app", "startTime", "endTime"};
     }
 
     @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("AppEvent{");
-        sb.append("app=").append(app);
-        sb.append(", startTime=").append(startTime);
-        sb.append(", endTime=").append(endTime);
-        sb.append('}');
-        return sb.toString();
+    protected Object[] getFields() {
+        return new Object[] {app, startTime, endTime};
     }
 }

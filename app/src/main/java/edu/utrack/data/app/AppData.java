@@ -1,10 +1,12 @@
 package edu.utrack.data.app;
 
+import edu.utrack.util.DataClass;
+
 /**
  * Created by Tobi on 07/03/2018.
  */
 
-public class AppData {
+public class AppData extends DataClass {
 
     private int id;
     private String packageName;
@@ -23,25 +25,12 @@ public class AppData {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        AppData appData = (AppData) o;
-        return id == appData.id && packageName.equals(appData.packageName);
+    protected String[] getFieldNames() {
+        return new String[] {"id", "packageName"};
     }
 
     @Override
-    public int hashCode() {
-        return (31 * id) + packageName.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("AppData{");
-        sb.append("id=").append(id);
-        sb.append(", packageName='").append(packageName).append('\'');
-        sb.append('}');
-        return sb.toString();
+    protected Object[] getFields() {
+        return new Object[] {id, packageName};
     }
 }

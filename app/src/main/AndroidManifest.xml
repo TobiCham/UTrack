@@ -9,6 +9,7 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -20,17 +21,27 @@
         <activity
             android:name=".activity.ActivitySelectEvent"
             android:theme="@style/AppTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".activity.dataview.ActivityViewData"
             android:theme="@style/AppThemeNoActionBar" />
         <activity android:name=".activity.ActivitySettings" />
+        <activity android:name=".activity.goals.ActivityAddObjective"
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/AppTheme" >
 
+        </activity>
+
+        <activity android:name=".activity.goals.ActivityViewArchivedGoal" />
+
+        <activity android:name=".activity.goals.ActivityGoals" android:theme="@style/AppThemeNoActionBar"/>
         <service
             android:name=".monitor.MonitorService"
             android:exported="false"

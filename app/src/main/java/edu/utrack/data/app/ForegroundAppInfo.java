@@ -2,11 +2,13 @@ package edu.utrack.data.app;
 
 import android.content.pm.ApplicationInfo;
 
+import edu.utrack.util.DataClass;
+
 /**
  * Created by Tobi on 04/03/2018.
  */
 
-public class ForegroundAppInfo {
+public class ForegroundAppInfo extends DataClass {
 
     private String packageName;
     private String className;
@@ -44,16 +46,12 @@ public class ForegroundAppInfo {
     }
 
     @Override
-    public int hashCode() {
-        return (41 * packageName.hashCode()) + className.hashCode();
+    protected String[] getFieldNames() {
+        return new String[] {"packageName", "className"};
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("ForegroundAppInfo{");
-        sb.append("packageName='").append(packageName).append('\'');
-        sb.append(", className='").append(className).append('\'');
-        sb.append('}');
-        return sb.toString();
+    protected Object[] getFields() {
+        return new Object[] {packageName, className};
     }
 }

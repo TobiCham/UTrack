@@ -2,11 +2,13 @@ package edu.utrack.data.calendar;
 
 import java.util.Objects;
 
+import edu.utrack.util.DataClass;
+
 /**
  * Created by Tobi on 06/03/2018.
  */
 
-public class CalendarData {
+public class CalendarData extends DataClass {
 
     private int dbID;
     private String accountName, name, ownerAccount;
@@ -35,33 +37,12 @@ public class CalendarData {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CalendarData data = (CalendarData) o;
-
-        if (dbID != data.dbID) return false;
-        return Objects.equals(accountName, data.accountName) && Objects.equals(name, data.name) && Objects.equals(ownerAccount, data.ownerAccount);
+    protected String[] getFieldNames() {
+        return new String[] {"id", "account", "name", "owner"};
     }
 
     @Override
-    public int hashCode() {
-        int result = dbID;
-        result = 43 * result + (accountName != null ? accountName.hashCode() : 0);
-        result = 43 * result + (name != null ? name.hashCode() : 0);
-        result = 43 * result + (ownerAccount != null ? ownerAccount.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("CalendarData{");
-        sb.append("dbID=").append(dbID);
-        sb.append(", accountName='").append(accountName).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", ownerAccount='").append(ownerAccount).append('\'');
-        sb.append('}');
-        return sb.toString();
+    protected Object[] getFields() {
+        return new Object[] {dbID, accountName, name, ownerAccount};
     }
 }
