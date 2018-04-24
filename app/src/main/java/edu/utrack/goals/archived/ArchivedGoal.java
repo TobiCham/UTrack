@@ -42,6 +42,11 @@ public class ArchivedGoal extends Goal<ArchivedObjective> {
         return activityData;
     }
 
+    /**
+     * -1 indicates the goal has been failed. Occurs if any of the objectives are failed<br />
+     * 0 indicates there isn't any data
+     * 1 indicates the goal has succeeded. Occurs if not failed, and at least 1 of the objectives has been passed
+     */
     public int getCompletionState() {
         return completionState;
     }

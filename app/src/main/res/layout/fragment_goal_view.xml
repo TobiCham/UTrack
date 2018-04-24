@@ -17,7 +17,7 @@
             <TextView
                 android:id="@+id/goalViewMessage"
                 android:layout_gravity="center_horizontal"
-                android:text="Click on an objective to view more information"
+                android:text="Click refresh to refresh the UI"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -30,29 +30,6 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:padding="8dp"
-                    android:background="#00AD18"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_weight="1"
-                        android:textColor="#FFFFFF"
-                        android:text="Test"
-                        android:gravity="center_vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <ImageView
-                        android:layout_gravity="right"
-                        android:src="@drawable/ic_delete_white_24dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
 
             </LinearLayout>
 

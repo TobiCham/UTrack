@@ -116,8 +116,6 @@ public class ActivityViewData extends MonitorActivity implements ReloadingActivi
 
     @Override
     public void handleReload() {
-        setHistoricButtonEnabled(false);
-
         Database db = getConnection().getDatabase();
         if(db == null) {
             reloader.finishReload("Unable to access database. Try again");
@@ -137,10 +135,10 @@ public class ActivityViewData extends MonitorActivity implements ReloadingActivi
         EventExcluder excluder = getEventExcluder();
         if(excluder.isEventExcluded(event)) {
             excluder.includeEvent(event);
-            Toast.makeText(this, "Included '" + event.getTitle() + "' from historic data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Included '" + event.getTitle() + "' to Goals", Toast.LENGTH_SHORT).show();
         } else {
             excluder.excludeEvent(event);
-            Toast.makeText(this, "Excluded '" + event.getTitle() + "' from historic data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Excluded '" + event.getTitle() + "' from Goals", Toast.LENGTH_SHORT).show();
         }
         invalidateOptionsMenu();
     }
@@ -154,7 +152,6 @@ public class ActivityViewData extends MonitorActivity implements ReloadingActivi
 
         //Update UI
         reloader.finishReload(null);
-        setHistoricButtonEnabled(true);
     }
 
     private boolean hasNoEvents(List<AppEvent> appEvents, Map<ScreenEventType, List<ScreenEvent>> screenEvents) {
@@ -163,10 +160,6 @@ public class ActivityViewData extends MonitorActivity implements ReloadingActivi
             if(!list.isEmpty()) return false;
         }
         return true;
-    }
-
-    private void setHistoricButtonEnabled(boolean enabled) {
-        findViewById(R.id.eventViewButtonHistoricData).setEnabled(enabled);
     }
 
     @Override

@@ -24,7 +24,6 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -40,6 +39,17 @@
         </activity>
 
         <activity android:name=".activity.goals.ActivityViewArchivedGoal" />
+
+        <receiver android:name=".alarm.AlarmReceiver">
+            <intent-filter>
+                <action android:name="edu.utrack.goalalarm" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".alarm.BootListener">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <activity android:name=".activity.goals.ActivityGoals" android:theme="@style/AppThemeNoActionBar"/>
         <service

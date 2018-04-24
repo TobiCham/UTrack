@@ -49,7 +49,6 @@ public class ActivityMonitor {
             }
         }
         active = false;
-        System.out.println("Monitor closed");
     }
 
     //TODO Right now, it constantly checks what app is in the foreground, and saves its own data.

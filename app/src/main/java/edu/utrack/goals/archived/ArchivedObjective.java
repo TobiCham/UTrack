@@ -1,8 +1,10 @@
 package edu.utrack.goals.archived;
 
+import edu.utrack.goals.GoalActivityData;
 import edu.utrack.goals.Objective;
 import edu.utrack.goals.ObjectiveType;
 import edu.utrack.goals.ObjectiveValueType;
+import edu.utrack.goals.active.ActiveObjective;
 
 public final class ArchivedObjective extends Objective {
 
@@ -11,6 +13,10 @@ public final class ArchivedObjective extends Objective {
     public ArchivedObjective(String name, ObjectiveType type, ObjectiveValueType valueType, Number value, int completedState) {
         super(name, type, valueType, value);
         this.completedState = completedState;
+    }
+
+    public ArchivedObjective(ActiveObjective objective, GoalActivityData data) {
+        this(objective.getDescription(), objective.getType(), objective.getValueType(), objective.getValue(), objective.getCompletionState(data));
     }
 
     /**

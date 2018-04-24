@@ -78,11 +78,7 @@ public class MonitorService extends Service {
     }
 
     private AppSettings getSettings() {
-        if(settings == null) {
-            settings = new AppSettings(TrackActivity.getSettingsFile(this));
-            settings.load();
-        }
-        return settings;
+        return TrackActivity.createSettings(this);
     }
 
     public void refreshSettings() {
@@ -130,26 +126,16 @@ public class MonitorService extends Service {
                 ((EventTable) table).saveCache();
             }
         }
-
-        //Time since last deleted old data
-        long timeElapsed = System.currentTimeMillis() - getSettings().lastDeletionTime;
-
-        //One day
-        if(timeElapsed > 24 * 60 * 60 * 1000) {
-            deleteOldData();
-        }
+        deleteOldData();
     }
 
     public void deleteOldData() {
         if(database == null) return;
 
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        System.out.println("Deleting old data...");
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        //Time since last deleted old data
+        long timeElapsed = System.currentTimeMillis() - getSettings().lastDeletionTime;
+        //Less than a day has passed
+        if(timeElapsed < 24 * 60 * 60 * 1000) return;
 
         HistorySettingType historySettingType = getSettings().historySetting;
         if(historySettingType == null) return;

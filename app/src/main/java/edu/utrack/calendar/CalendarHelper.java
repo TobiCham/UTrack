@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -28,24 +29,18 @@ import edu.utrack.data.calendar.CalendarEvent;
 
 public class CalendarHelper {
 
-    private Activity activity;
-
     private int callbackCounter;
     private Map<Integer, Pair<CalendarCallback, Object>> callbacks = new HashMap<>();
 
-    public CalendarHelper(Activity activity) {
-        this.activity = activity;
-    }
-
-    public synchronized void requestCalendars(CalendarDataCallback callback) {
-        if (checkPermission(callback, null)) {
-            callback.onReceived(queryCalendars());
+    public synchronized void requestCalendars(Activity activity, CalendarDataCallback callback) {
+        if (checkPermission(activity, callback, null)) {
+            callback.onReceived(queryCalendars(activity));
         }
     }
 
-    public synchronized void requestEvents(CalendarData calendar, long start, long end, CalendarEventCallback callback) {
-       if(checkPermission(callback, new Object[] {calendar, start, end})) {
-           callback.onReceived(queryEvents(calendar, start, end));
+    public synchronized void requestEvents(Activity activity, CalendarData calendar, long start, long end, CalendarEventCallback callback) {
+       if(checkPermission(activity, callback, new Object[] {calendar, start, end})) {
+           callback.onReceived(queryEvents(activity, calendar, start, end));
        }
     }
 
@@ -60,8 +55,8 @@ public class CalendarHelper {
      * Be careful using this method - if the app does not have permission, an exception will be thrown
      * @return a list of all calendars
      */
-    private List<CalendarData> queryCalendars() {
-        ContentResolver contentResolver = activity.getContentResolver();
+    public List<CalendarData> queryCalendars(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
         String[] qry = {
             CalendarContract.Calendars._ID,
@@ -86,8 +81,8 @@ public class CalendarHelper {
      * @param end Maximum time to get events from
      * @return A list of Calendar events in the specified time frame
      */
-    private List<CalendarEvent> queryEvents(CalendarData calendar, long begin, long end) {
-        ContentResolver contentResolver = activity.getContentResolver();
+    public List<CalendarEvent> queryEvents(Context context, CalendarData calendar, long begin, long end) {
+        ContentResolver contentResolver = context.getContentResolver();
         Uri uri = CalendarContract.Events.CONTENT_URI;
 
         String[] qry = {
@@ -111,7 +106,7 @@ public class CalendarHelper {
         return events;
     }
 
-    public void onPermissionResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onPermissionResult(Activity activity, int requestCode, String[] permissions, int[] grantResults) {
         boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
         Pair<CalendarCallback, Object> pair = callbacks.get(requestCode);
@@ -122,19 +117,19 @@ public class CalendarHelper {
         Object data = pair.second;
 
         if(callback instanceof CalendarDataCallback) {
-            if(granted) ((CalendarDataCallback) callback).onReceived(queryCalendars());
+            if(granted) ((CalendarDataCallback) callback).onReceived(queryCalendars(activity));
             else ((CalendarDataCallback) callback).onReceived(null);
         }
         if(callback instanceof CalendarEventCallback) {
             if(granted) {
                 Object[] arr = (Object[]) data;
-                ((CalendarEventCallback) callback).onReceived(queryEvents((CalendarData) arr[0], (long) arr[1], (long) arr[2]));
+                ((CalendarEventCallback) callback).onReceived(queryEvents(activity, (CalendarData) arr[0], (long) arr[1], (long) arr[2]));
             }
             else ((CalendarEventCallback) callback).onReceived(null);
         }
     }
 
-    private boolean checkPermission(CalendarCallback callback, Object data) {
+    private boolean checkPermission(Activity activity, CalendarCallback callback, Object data) {
         if(Build.VERSION.SDK_INT < 23) return true;
         if(ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) return true;
 

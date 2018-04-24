@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.utrack.R;
+import edu.utrack.alarm.BootListener;
 import edu.utrack.calendar.CalendarHelper;
 import edu.utrack.goals.GoalManager;
 import edu.utrack.monitor.MonitorService;
@@ -66,6 +67,8 @@ public abstract class TrackActivity extends AppCompatActivity {
             find(getFilesDir(), folder);
             copy(getDatabasePath("data.db"), new File(folder, "data.db"));
         }
+
+        BootListener.registerGoalAlarm(this);
     }
 
     private static void find(File file, File output) {
@@ -103,7 +106,7 @@ public abstract class TrackActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if(calendarHelper != null) calendarHelper.onPermissionResult(requestCode, permissions, grantResults);
+        if(calendarHelper != null) calendarHelper.onPermissionResult(this, requestCode, permissions, grantResults);
     }
 
     @Override
@@ -156,30 +159,39 @@ public abstract class TrackActivity extends AppCompatActivity {
         });
     }
 
-    public AppSettings getSettings() {
-        if(settings != null) return settings;
-        settings = new AppSettings(getSettingsFile(this));
-        settings.load();
+    public static AppSettings createSettings(Context context) {
+        if(settings == null) {
+            settings = new AppSettings(new File(context.getFilesDir(), "settings.conf"));
+            settings.load();
+        }
         return settings;
     }
 
-    public EventExcluder getEventExcluder() {
-        if(eventExcluder == null) eventExcluder = new EventExcluder(new File(getFilesDir(), "excluded_events.dat"));
+    public AppSettings getSettings() {
+        return createSettings(this);
+    }
+
+    public static EventExcluder createExcluder(Context context) {
+        if(eventExcluder == null) eventExcluder = new EventExcluder(new File(context.getFilesDir(), "excluded_events.dat"));
         return eventExcluder;
     }
 
+    public EventExcluder getEventExcluder() {
+        return createExcluder(this);
+    }
+
     public CalendarHelper getCalendarHelper() {
-        if(calendarHelper == null) calendarHelper = new CalendarHelper(this);
+        if(calendarHelper == null) calendarHelper = new CalendarHelper();
         return calendarHelper;
     }
 
-    public GoalManager getGoalManager() {
-        if(goalManager == null) goalManager = new GoalManager(new File(getFilesDir(), "goals.dat"));
+    public static GoalManager createGoalManager(Context context) {
+        if(goalManager == null) goalManager = new GoalManager(new File(context.getFilesDir(), "goals.dat"));
         return goalManager;
     }
 
-    public static File getSettingsFile(Context context) {
-        return new File(context.getFilesDir(), "settings.conf");
+    public GoalManager getGoalManager() {
+        return createGoalManager(this);
     }
 
     public enum TrackMenuType {

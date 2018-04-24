@@ -75,6 +75,7 @@ public class ActivityGoals extends MonitorActivity implements ReloadingActivity 
                 return "Archived";
             }
         });
+        pager.setOffscreenPageLimit(3);
 
         Toolbar toolbar = findViewById(R.id.goalsToolbar);
         toolbar.setTitle("Goals");
@@ -124,22 +125,7 @@ public class ActivityGoals extends MonitorActivity implements ReloadingActivity 
     }
 
     private void reloadUI(FragmentViewGoal fragment, List<CalendarEvent> events, long startTime, long endTime) {
-        int screenOns = getConnection().getDatabase().getScreenEventsTable().getScreenOns(events);
-        List<AppEvent> appEvents = getConnection().getDatabase().getAppEventsTable().getEvents(events);
-
-        long totalAppTime = 0;
-        Set<AppData> uniqueApps = new HashSet<>();
-        for(AppEvent event : appEvents) {
-            totalAppTime += event.getDuration(startTime, endTime);
-            uniqueApps.add(event.getApp());
-        }
-
-        long totalEventTime = 0;
-        for(CalendarEvent event : events) {
-            totalEventTime += event.getDuration();
-        }
-        GoalActivityData data = new GoalActivityData((int) (totalAppTime / 1000L), uniqueApps.size(), screenOns, (int) (totalEventTime / 1000L));
-
+        GoalActivityData data = GoalActivityData.create(events, getConnection().getDatabase(), startTime, endTime);
         runOnUiThread(() -> {
             fragment.reload(getGoalManager().getGoal(fragment.getGoalType()).getObjectives(), data);
         });

@@ -1,6 +1,5 @@
 package edu.utrack.activity.goals;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -19,19 +18,11 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import org.w3c.dom.Text;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import edu.utrack.R;
 import edu.utrack.activity.TrackActivity;
-import edu.utrack.data.app.AppEvent;
-import edu.utrack.data.calendar.CalendarEvent;
 import edu.utrack.goals.Goal;
 import edu.utrack.goals.GoalActivityData;
 import edu.utrack.goals.GoalManager;
@@ -39,7 +30,6 @@ import edu.utrack.goals.GoalType;
 import edu.utrack.goals.Objective;
 import edu.utrack.goals.active.ActiveGoal;
 import edu.utrack.goals.active.ActiveObjective;
-import edu.utrack.goals.archived.ArchivedGoal;
 import edu.utrack.goals.archived.ArchivedObjective;
 import edu.utrack.util.AppUtils;
 import edu.utrack.util.TimeUtils;

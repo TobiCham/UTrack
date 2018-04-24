@@ -40,7 +40,7 @@ public class SettingsFragment extends PreferenceFragment {
         preferenceCalendar.setSummary(calendarSummary.replace("%s", "None"));
 
         List<CalendarData> loadedCalendars = new ArrayList<>();
-        ((TrackActivity) getActivity()).getCalendarHelper().requestCalendars((calendars) -> {
+        ((TrackActivity) getActivity()).getCalendarHelper().requestCalendars(getActivity(), (calendars) -> {
             if(calendars == null) return;
             CharSequence[] newEntries = new CharSequence[calendars.size() + 1];
             newEntries[0] = "None";

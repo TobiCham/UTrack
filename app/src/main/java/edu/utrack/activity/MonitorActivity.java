@@ -26,7 +26,7 @@ public abstract class MonitorActivity extends TrackActivity {
     protected void onResume() {
         super.onResume();
 
-        connection = new MonitorConnection(this::internalConnected);
+        connection = new MonitorConnection(this::onConnected);
         bindService(new Intent(this, MonitorService.class), connection, Context.BIND_ABOVE_CLIENT);
     }
 
@@ -39,16 +39,6 @@ public abstract class MonitorActivity extends TrackActivity {
 
         connection = null;
     }
-
-    private void internalConnected() {
-        AppSettings settings = getSettings();
-
-
-
-        onConnected();
-    }
-
-
 
     public MonitorConnection getConnection() {
         return connection;

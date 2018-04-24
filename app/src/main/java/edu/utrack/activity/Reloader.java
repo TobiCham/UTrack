@@ -51,7 +51,7 @@ public class Reloader {
             finishReload("No Calendar is selected.\nGo to the settings menu to select a calendar");
             return;
         }
-        helper.requestCalendars((calendars) -> {
+        helper.requestCalendars(activity, (calendars) -> {
             if(calendars == null) {
                 finishReload("You must allow this app to access your calendar!");
                 return;
@@ -63,7 +63,7 @@ public class Reloader {
                 settings.save();
                 return;
             }
-            helper.requestEvents(data, begin, end, (events) -> {
+            helper.requestEvents(activity, data, begin, end, (events) -> {
                 if(events == null) {
                     finishReload("You must allow this app to access your calendar!");
                     return;
