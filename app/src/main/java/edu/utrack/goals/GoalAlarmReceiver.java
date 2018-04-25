@@ -1,4 +1,4 @@
-package edu.utrack.alarm;
+package edu.utrack.goals;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,11 +22,13 @@ import edu.utrack.goals.archived.ArchivedObjective;
 import edu.utrack.settings.AppSettings;
 import edu.utrack.settings.EventExcluder;
 
-public class AlarmReceiver extends BroadcastReceiver {
+public class GoalAlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         AppSettings settings = TrackActivity.createSettings(context);
+        if(!settings.tracks) return;
+
         EventExcluder excluder = TrackActivity.createExcluder(context);
         GoalManager goalManager = TrackActivity.createGoalManager(context);
 

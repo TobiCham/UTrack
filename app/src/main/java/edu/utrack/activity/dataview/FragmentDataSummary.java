@@ -59,6 +59,8 @@ public class FragmentDataSummary extends DataViewFragment {
 
     @Override
     public void updateUI(List<AppEvent> appEvents, Map<ScreenEventType, List<ScreenEvent>> screenEvents) {
+        if(getActivity() == null || getView() == null) return;
+
         ((TextView) getView().findViewById(R.id.summaryScreenOffTotal)).setText(Integer.toString(screenEvents.get(ScreenEventType.OFF).size()));
         ((TextView) getView().findViewById(R.id.summaryScreenOnTotal)).setText(Integer.toString(screenEvents.get(ScreenEventType.ON).size()));
         ((TextView) getView().findViewById(R.id.summaryUnlockTotal)).setText(Integer.toString(screenEvents.get(ScreenEventType.UNLOCK).size()));

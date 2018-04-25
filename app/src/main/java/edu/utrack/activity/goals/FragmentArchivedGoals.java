@@ -67,8 +67,9 @@ public class FragmentArchivedGoals extends Fragment {
             return;
         }
 
-        Collections.sort(dailyGoals, (g1, g2) -> Long.compare(g1.getBeginTime(), g2.getEndTime()));
-        Collections.sort(weeklyGoals, (g1, g2) -> Long.compare(g1.getBeginTime(), g2.getEndTime()));
+        //Reverse chronological order, latest first
+        Collections.sort(dailyGoals, (g1, g2) -> -1 * Long.compare(g1.getBeginTime(), g2.getBeginTime()));
+        Collections.sort(weeklyGoals, (g1, g2) -> -1 * Long.compare(g1.getBeginTime(), g2.getBeginTime()));
 
         LinearLayout layout = getView(R.id.archivedGoalsList);
         layout.removeAllViews();

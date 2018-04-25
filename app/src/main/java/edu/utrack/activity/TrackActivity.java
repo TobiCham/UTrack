@@ -1,14 +1,10 @@
 package edu.utrack.activity;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.utrack.R;
-import edu.utrack.alarm.BootListener;
+import edu.utrack.BootListener;
 import edu.utrack.calendar.CalendarHelper;
 import edu.utrack.goals.GoalManager;
 import edu.utrack.monitor.MonitorService;

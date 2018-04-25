@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="edu.utrack">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.REAL_GET_TASKS" />
     <uses-permission
@@ -40,12 +41,12 @@
 
         <activity android:name=".activity.goals.ActivityViewArchivedGoal" />
 
-        <receiver android:name=".alarm.AlarmReceiver">
+        <receiver android:name=".goals.GoalAlarmReceiver">
             <intent-filter>
                 <action android:name="edu.utrack.goalalarm" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".alarm.BootListener">
+        <receiver android:name=".BootListener">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
