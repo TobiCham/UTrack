@@ -20,12 +20,12 @@
                 android:layout_height="wrap_content" />
 
             <com.jjoe64.graphview.GraphView
-                android:id="@+id/graph"
+                android:id="@+id/graphsAppGraph"
                 android:layout_width="match_parent"
                 android:layout_height="160dp" />
 
             <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/chart"
+                android:id="@+id/graphsPiChart"
                 android:layout_width="match_parent"
                 android:layout_height="220dp" />
 

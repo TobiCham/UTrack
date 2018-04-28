@@ -90,11 +90,9 @@ public class ScreenEventsTable extends EventTable<ScreenEvent> {
         return map;
     }
 
-
-    //TODO Do this
     @Override
     public void deleteOlderThan(long timestamp) {
-
+        getWritebleDB().execSQL("DELETE FROM `" + getTableName() + "` WHERE `time` < " + timestamp);
     }
 
     @Override

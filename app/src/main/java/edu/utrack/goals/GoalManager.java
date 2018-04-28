@@ -77,20 +77,6 @@ public class GoalManager {
         if(!saveFile.exists()) {
             dailyGoal = new ActiveGoal(GoalType.DAILY);
             weeklyGoal = new ActiveGoal(GoalType.WEEKLY);
-
-            //Enable to add random objectives/goals to the archived list
-//            Random rand = new Random();
-//            for(int i = 0; i < 15; i++) {
-//
-//                List<ArchivedObjective> objectives = new ArrayList<>();
-//                for(int j = 0; j < rand.nextInt(5) + 2; j++) {
-//                    objectives.add(new ArchivedObjective((i + j) + "", ObjectiveType.fromId(rand.nextInt(2)), ObjectiveValueType.fromId(rand.nextInt(3)), rand.nextDouble(), rand.nextInt(3) - 1));
-//                }
-//
-//                GoalActivityData data = new GoalActivityData(rand.nextInt(5000), rand.nextInt(60), rand.nextInt(150), rand.nextBoolean() ? 0 : rand.nextInt(10000));
-//                archivedGoals.add(new ArchivedGoal(rand.nextBoolean() ? GoalType.DAILY : GoalType.WEEKLY, objectives, rand.nextLong(), rand.nextLong(), data));
-//            }
-
             save();
             return;
         }

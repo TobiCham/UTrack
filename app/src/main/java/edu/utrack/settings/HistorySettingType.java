@@ -2,10 +2,12 @@ package edu.utrack.settings;
 
 public enum HistorySettingType {
 
-    ONE_DAY(1, "1 Day"),
     ONE_WEEK(7, "1 Week"),
     TWO_WEEKS(14, "2 Weeks"),
     FOUR_WEEKS(28, "4 Weeks"),
+    EIGHT_WEEKS(56, "8 Weeks"),
+    TWELVE_WEEKS(84, "12 Weeks"),
+    SIX_MONTHS(182, "6 Months"),
 
     //This is apparently over 5.8 million years, just to clarify if this number is big enough
     FOREVER(Integer.MAX_VALUE, "Forever");

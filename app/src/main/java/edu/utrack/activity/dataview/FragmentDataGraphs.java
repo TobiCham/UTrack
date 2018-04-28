@@ -51,7 +51,7 @@ public class FragmentDataGraphs extends DataViewFragment {
     }
 
     private void updateLineGraph(List<AppEvent> appEvents) {
-        GraphView graph = getView().findViewById(R.id.graph);
+        GraphView graph = getView().findViewById(R.id.graphsAppGraph);
 
         Collections.sort(appEvents, (e1, e2) -> Long.compare(e1.getStartTime(), e2.getStartTime()));
 
@@ -101,7 +101,7 @@ public class FragmentDataGraphs extends DataViewFragment {
     }
 
     private void updatePieChart(List<AppEvent> appEvents) {
-        PieChart chart = getView().findViewById(R.id.chart);
+        PieChart chart = getView().findViewById(R.id.graphsPiChart);
         chart.setUsePercentValues(true);
         chart.getDescription().setEnabled(false);
         chart.setExtraOffsets(5,10,5,5);

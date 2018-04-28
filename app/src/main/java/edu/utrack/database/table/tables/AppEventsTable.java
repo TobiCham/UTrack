@@ -101,10 +101,9 @@ public class AppEventsTable extends EventTable<AppEvent> {
         return newEvents;
     }
 
-    //TODO Do this
     @Override
     public void deleteOlderThan(long timestamp) {
-
+        getWritebleDB().execSQL("DELETE FROM `" + getTableName() + "` WHERE `end_time` < " + timestamp);
     }
 
     @Override
