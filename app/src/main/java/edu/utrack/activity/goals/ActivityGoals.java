@@ -14,21 +14,15 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import edu.utrack.R;
 import edu.utrack.activity.MonitorActivity;
 import edu.utrack.activity.Reloader;
 import edu.utrack.activity.ReloadingActivity;
-import edu.utrack.data.app.AppData;
-import edu.utrack.data.app.AppEvent;
-import edu.utrack.data.calendar.CalendarData;
 import edu.utrack.data.calendar.CalendarEvent;
-import edu.utrack.goals.Goal;
 import edu.utrack.goals.GoalActivityData;
 import edu.utrack.goals.GoalType;
 

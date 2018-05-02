@@ -50,7 +50,7 @@
                         android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
                         android:layout_height="wrap_content"
-                        android:text="5" />
+                        android:text="-" />
 
                     <TextView
                         android:id="@+id/summaryAppTimeText"
@@ -58,7 +58,7 @@
                         android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
                         android:layout_height="wrap_content"
-                        android:text="50m, 23s" />
+                        android:text="-" />
                 </TableRow>
 
             </TableLayout>
@@ -116,7 +116,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
-                        android:text="0" />
+                        android:text="-" />
 
                     <TextView
                         android:id="@+id/summaryScreenOffTotal"
@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
-                        android:text="0" />
+                        android:text="-" />
 
                     <TextView
                         android:id="@+id/summaryUnlockTotal"
@@ -134,7 +134,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
-                        android:text="0" />
+                        android:text="-" />
                 </TableRow>
             </TableLayout>
 
@@ -192,7 +192,7 @@
                         android:gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Messenger" />
+                        android:text="-" />
 
                     <TextView
                         android:layout_weight="1"
@@ -200,7 +200,7 @@
                         android:gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="11:23:23" />
+                        android:text="-" />
 
                     <TextView
                         android:layout_weight="1"
@@ -208,7 +208,7 @@
                         android:gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2 minutes, 5 seconds" />
+                        android:text="-" />
                 </TableRow>
             </TableLayout>
         </LinearLayout>

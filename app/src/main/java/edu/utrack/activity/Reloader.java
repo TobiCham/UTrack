@@ -3,13 +3,8 @@ package edu.utrack.activity;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import edu.utrack.R;
-import edu.utrack.activity.MonitorActivity;
-import edu.utrack.activity.ReloadingActivity;
-import edu.utrack.activity.TrackActivity;
 import edu.utrack.calendar.CalendarHelper;
 import edu.utrack.data.calendar.CalendarData;
 import edu.utrack.data.calendar.CalendarEvent;

@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import edu.utrack.R;
 import edu.utrack.BootListener;
+import edu.utrack.R;
 import edu.utrack.calendar.CalendarHelper;
 import edu.utrack.goals.GoalManager;
 import edu.utrack.monitor.MonitorService;

@@ -10,9 +10,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,6 @@ import edu.utrack.activity.dataview.ActivityViewData;
 import edu.utrack.activity.goals.ActivityGoals;
 import edu.utrack.data.calendar.CalendarData;
 import edu.utrack.data.calendar.CalendarEvent;
-import edu.utrack.settings.AppSettings;
 import edu.utrack.util.AppUtils;
 
 /**

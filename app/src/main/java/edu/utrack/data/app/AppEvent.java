@@ -1,7 +1,5 @@
 package edu.utrack.data.app;
 
-import java.util.Objects;
-
 import edu.utrack.data.calendar.CalendarEvent;
 import edu.utrack.util.DataClass;
 

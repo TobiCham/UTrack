@@ -5,7 +5,6 @@ import android.content.Intent;
 
 import edu.utrack.monitor.MonitorConnection;
 import edu.utrack.monitor.MonitorService;
-import edu.utrack.settings.AppSettings;
 
 /**
  * Created by Tobi on 29/03/2018.
