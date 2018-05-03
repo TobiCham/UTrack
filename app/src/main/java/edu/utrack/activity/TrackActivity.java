@@ -50,54 +50,8 @@ public abstract class TrackActivity extends AppCompatActivity {
         if(type == TrackMenuType.BACK) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        if(getSettings().developer) {
-            File folder = new File(Environment.getExternalStorageDirectory(), "UTrack");
-            if(!folder.exists()) folder.mkdirs();
-
-            find(getFilesDir(), folder);
-            copy(getDatabasePath("data.db"), new File(folder, "data.db"));
-
-            folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-            if(!folder.exists()) folder.mkdirs();
-
-            find(getFilesDir(), folder);
-            copy(getDatabasePath("data.db"), new File(folder, "data.db"));
-        }
 
         BootListener.registerGoalAlarm(this);
-    }
-
-    private static void find(File file, File output) {
-        if(file.isFile()) {
-            copy(file, new File(output, file.getName()));
-        } else {
-            File[] files = file.listFiles();
-            if(files != null) {
-                for(File f : files) find(f, output);
-            }
-        }
-    }
-
-    private static void copy(File f1, File f2) {
-        if(!f2.exists()) {
-            try {
-                f2.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        try(FileInputStream in = new FileInputStream(f1); FileOutputStream output = new FileOutputStream(f2)) {
-            byte[] buff = new byte[1024];
-
-            while(true) {
-                int read = in.read(buff);
-                if(read < 0) break;
-                output.write(buff, 0, read);
-            }
-            output.flush();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

@@ -91,10 +91,10 @@ public class ActivitySelectEvent extends TrackActivity implements ReloadingActiv
             return;
         }
 
-        if(getSettings().developer) {
-            events.add(0, new CalendarEvent(new CalendarData(-1, "test@test.com", "test", "test"), -1, "All of Time Event", "????", 0, Long.MAX_VALUE));
-            events.add(1, new CalendarEvent(new CalendarData(-1, "test@test.com", "test", "test"), -2, "Past 24 hrs", "???", System.currentTimeMillis() - (24 * 60 * 60 * 1000), System.currentTimeMillis()));
-        }
+//        if(getSettings().developer) {
+//            events.add(0, new CalendarEvent(new CalendarData(-1, "test@test.com", "test", "test"), -1, "All of Time Event", "????", 0, Long.MAX_VALUE));
+//            events.add(1, new CalendarEvent(new CalendarData(-1, "test@test.com", "test", "test"), -2, "Past 24 hrs", "???", System.currentTimeMillis() - (24 * 60 * 60 * 1000), System.currentTimeMillis()));
+//        }
 
         runOnUiThread(() -> {
             LinearLayout layout = findViewById(R.id.calendarLayoutList);
