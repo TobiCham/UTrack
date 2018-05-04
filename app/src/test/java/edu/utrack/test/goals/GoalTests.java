@@ -16,4 +16,6 @@ import org.junit.runners.Suite.SuiteClasses;
     WeeklyGoalTest.class,
     WeeklyGoalTest2.class
 })
-public class GoalTests { }
+public class GoalTests {
+
+}
