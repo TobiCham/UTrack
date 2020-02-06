@@ -12,7 +12,7 @@ import android.content.pm.PackageManager;
 public class AppUtils {
 
     public static String getAppName(String packageName, Context context) {
-        PackageManager manager = context.getApplicationContext().getPackageManager();
+        PackageManager manager = context.getPackageManager();
         String name = null;
         try {
             ApplicationInfo info = manager.getApplicationInfo( packageName, 0);

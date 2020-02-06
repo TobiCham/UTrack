@@ -3,7 +3,7 @@ package edu.utrack.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,7 +18,6 @@ import java.util.Map;
 import edu.utrack.R;
 import edu.utrack.activity.dataview.ActivityViewData;
 import edu.utrack.activity.goals.ActivityGoals;
-import edu.utrack.data.calendar.CalendarData;
 import edu.utrack.data.calendar.CalendarEvent;
 import edu.utrack.util.AppUtils;
 
@@ -75,8 +74,11 @@ public class ActivitySelectEvent extends TrackActivity implements ReloadingActiv
         new Thread(() -> {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.WEEK_OF_YEAR, -4);
+            long start = calendar.getTimeInMillis();
+            calendar.add(Calendar.WEEK_OF_YEAR, 8);
+            long end = calendar.getTimeInMillis();
 
-            reloader.requestCalendarEvents(this::updateEvents, calendar.getTimeInMillis(), System.currentTimeMillis());
+            reloader.requestCalendarEvents(this::updateEvents, start, end);
         }).start();
     }
 

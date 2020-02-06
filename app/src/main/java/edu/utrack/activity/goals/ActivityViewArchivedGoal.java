@@ -1,7 +1,7 @@
 package edu.utrack.activity.goals;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.widget.TextView;
 
 import com.google.gson.Gson;

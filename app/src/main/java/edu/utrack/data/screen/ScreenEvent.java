@@ -1,6 +1,6 @@
 package edu.utrack.data.screen;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import edu.utrack.util.DataClass;
 

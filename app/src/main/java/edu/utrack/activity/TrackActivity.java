@@ -3,16 +3,12 @@ package edu.utrack.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,9 +22,6 @@ import edu.utrack.settings.EventExcluder;
 
 /**
  * Created by Tobi on 29/03/2018.
- */
-
-/**
  * Base activity which automatically starts the monitor service
  */
 public abstract class TrackActivity extends AppCompatActivity {
@@ -56,7 +49,10 @@ public abstract class TrackActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if(calendarHelper != null) calendarHelper.onPermissionResult(this, requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (calendarHelper != null) {
+            calendarHelper.onPermissionResult(this, requestCode, permissions, grantResults);
+        }
     }
 
     @Override

@@ -48,24 +48,6 @@ public class ConfigSection {
 		return this;
 	}
 
-	public ConfigSection getSection(String key) {
-		Object value = map.get(key);
-		if(value == null || !(value instanceof ConfigSection)) return null;
-		return (ConfigSection) value;
-	}
-	
-	public List<ConfigSection> getSectionList(String key) {
-		Object value = map.get(key);
-		if(value == null) return null;
-		return gson().fromJson(gson().toJson(value), new TypeToken<List<ConfigSection>>() {}.getType());
-	}
-	
-	public List<Integer> getIntList(String key) {
-		Object value = map.get(key);
-		if(value == null) return null;
-		return gson().fromJson(gson().toJson(value), new TypeToken<List<Integer>>() {}.getType());
-	}
-	
 	public <T> T getType(String key, Class<T> clas) {
 		Object value = map.get(key);
 		if(value == null) return null;
@@ -83,26 +65,6 @@ public class ConfigSection {
 		return obj instanceof Number ? ((Number) obj).intValue() : 0;
 	}
 
-	public double getDouble(String key) {
-		Object obj = map.get(key);
-		return obj instanceof Number ? ((Number) obj).doubleValue() : 0;
-	}
-
-	public float getFloat(String key) {
-		Object obj = map.get(key);
-		return obj instanceof Number ? ((Number) obj).floatValue() : 0;
-	}
-
-	public byte getByte(String key) {
-		Object obj = map.get(key);
-		return obj instanceof Number ? ((Number) obj).byteValue() : 0;
-	}
-
-	public short getShort(String key) {
-		Object obj = map.get(key);
-		return obj instanceof Number ? ((Number) obj).shortValue() : 0;
-	}
-
 	public long getLong(String key) {
 		Object obj = map.get(key);
 		return obj instanceof Number ? ((Number) obj).longValue() : 0;
@@ -112,7 +74,7 @@ public class ConfigSection {
 		Object obj = map.get(key);
 		if(obj == null) return false;
 		if(obj instanceof Boolean) return (boolean) obj;
-		return obj != null && Boolean.parseBoolean(obj.toString());
+		return Boolean.parseBoolean(obj.toString());
 	}
 
 	public String getString(String key) {

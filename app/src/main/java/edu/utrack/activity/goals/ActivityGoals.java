@@ -2,12 +2,12 @@ package edu.utrack.activity.goals;
 
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.widget.Toolbar;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -53,7 +53,7 @@ public class ActivityGoals extends MonitorActivity implements ReloadingActivity 
         pager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
 
             @Override
-            public android.support.v4.app.Fragment getItem(int position) {
+            public Fragment getItem(int position) {
                 return fragments.get(position);
             }
 

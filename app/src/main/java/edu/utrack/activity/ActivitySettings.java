@@ -1,7 +1,7 @@
 package edu.utrack.activity;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.util.Map;
 
@@ -29,16 +29,6 @@ public class ActivitySettings extends MonitorActivity {
         } else {
             System.err.println("Connection is null, can't save settings");
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     @Override

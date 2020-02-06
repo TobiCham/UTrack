@@ -20,7 +20,7 @@ public class AppsTable extends Table {
     private static final String TABLE_NAME = "apps";
     private static final int LOAD_LIMIT = 50;
 
-    private Set<AppData> cache = new HashSet<>();
+    private final Set<AppData> cache = new HashSet<>();
 
     public AppsTable(Database database) {
         super(database);
@@ -34,7 +34,7 @@ public class AppsTable extends Table {
     public void loadTopApps(SQLiteDatabase db) {
         cache.clear();
         String sql = "SELECT DISTINCT `{u}`.`app`, `{a}`.`package`, COUNT(`{u}`.`app`) as `count` "
-                   + "FROM `{u}` INNER JOIN {a} ON `{a}`.`id` = `{u}`.`app` "
+                   + "FROM `{u}` INNER JOIN `{a}` ON `{a}`.`id` = `{u}`.`app` "
                    + "GROUP BY `{u}`.`app` ORDER BY COUNT(`{u}`.`app`) DESC LIMIT " + LOAD_LIMIT;
         sql = sql.replace("{u}", database.getAppEventsTable().getTableName());
         sql = sql.replace("{a}", getTableName());
@@ -45,25 +45,10 @@ public class AppsTable extends Table {
         }
     }
 
-    public AppData getFromID(int id) {
-        AppData app = getDataFromCache(id);
-        if(app != null) return getFromDB(id);
-        app = getFromDB(id);
-        if(app != null) cache.add(app);
-        return app;
-    }
-
     public AppData getOrCreateAppData(String packageName) {
         AppData app = getDataFromCache(packageName);
         if(app != null) return app;
         return getOrInsert(packageName);
-    }
-
-    public AppData getDataFromCache(int id) {
-        for(AppData app : cache) {
-            if(app.getId() == id) return app;
-        }
-        return null;
     }
 
     public AppData getDataFromCache(String packageName) {
@@ -86,12 +71,6 @@ public class AppsTable extends Table {
         Cursor cursor = getReadableDB().rawQuery("SELECT `id` FROM `" + getTableName() + "` WHERE `package`=?", new String[] {packageName});
         if(!cursor.moveToNext()) return null;
         return new AppData(cursor.getInt(0), packageName);
-    }
-
-    private AppData getFromDB(int id) {
-        Cursor cursor = getReadableDB().rawQuery("SELECT `package` FROM `" + getTableName() + "` WHERE `id`=" + id, new String[0]);
-        if(!cursor.moveToNext()) return null;
-        return new AppData(id, cursor.getString(0));
     }
 
     private AppData getFromCursor(Cursor cursor) {

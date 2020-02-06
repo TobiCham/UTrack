@@ -1,61 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="edu.utrack">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="edu.utrack">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.REAL_GET_TASKS" />
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.REAL_GET_TASKS" tools:ignore="ProtectedPermissions"/>
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission"/>
     <uses-permission
-        android:name="android.permission.PACKAGE_USAGE_STATS"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
+            android:name="android.permission.PACKAGE_USAGE_STATS"
+            tools:ignore="ProtectedPermissions"/>
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity
-            android:name=".activity.ActivitySelectEvent"
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity
+                android:name=".activity.ActivitySelectEvent"
+                android:theme="@style/AppTheme" android:exported="true">
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
         </activity>
         <activity
-            android:name=".activity.dataview.ActivityViewData"
-            android:theme="@style/AppThemeNoActionBar" />
-        <activity android:name=".activity.ActivitySettings" />
+                android:name=".activity.dataview.ActivityViewData"
+                android:theme="@style/AppThemeNoActionBar"/>
+        <activity android:name=".activity.ActivitySettings"/>
         <activity android:name=".activity.goals.ActivityAddObjective"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/AppTheme" >
+                  android:windowSoftInputMode="adjustPan"
+                  android:theme="@style/AppTheme">
 
         </activity>
 
-        <activity android:name=".activity.goals.ActivityViewArchivedGoal" />
+        <activity android:name=".activity.goals.ActivityViewArchivedGoal"/>
 
-        <receiver android:name=".goals.GoalAlarmReceiver">
+        <receiver android:name=".goals.GoalAlarmReceiver" android:exported="true">
             <intent-filter>
-                <action android:name="edu.utrack.goalalarm" />
+                <action android:name="edu.utrack.goalalarm"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".BootListener">
+        <receiver android:name=".BootListener" android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
         <activity android:name=".activity.goals.ActivityGoals" android:theme="@style/AppThemeNoActionBar"/>
         <service
-            android:name=".monitor.MonitorService"
-            android:exported="false"
-            android:stopWithTask="false" />
+                android:name=".monitor.MonitorService"
+                android:exported="false"
+                android:stopWithTask="false"/>
     </application>
 
 </manifest>

@@ -10,14 +10,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.CalendarContract;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import android.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import edu.utrack.data.calendar.CalendarData;
 import edu.utrack.data.calendar.CalendarEvent;
@@ -92,15 +88,16 @@ public class CalendarHelper {
             CalendarContract.Events.DTEND
         };
 
-        String selection = "(" + CalendarContract.Events.CALENDAR_ID + "=? AND " + CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTEND + " <= ?)";
+        String selection = "(" + CalendarContract.Events.CALENDAR_ID + "=? AND "
+            + CalendarContract.Events.DTSTART + ">=" + begin + " AND "
+            + CalendarContract.Events.DTEND + " <= " + end + ")";
         @SuppressLint("MissingPermission")
-        Cursor cursor = contentResolver.query(uri, qry, selection, new String[] {calendar.getDBID() + "", begin + "", end + ""}, null);
+        Cursor cursor = contentResolver.query(uri, qry, selection, new String[] {calendar.getDBID() + ""}, CalendarContract.Events.DTSTART + " DESC;");
         List<CalendarEvent> events = new ArrayList<>();
 
         while(cursor.moveToNext()) {
             events.add(new CalendarEvent(calendar, cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getLong(3), cursor.getLong(4)));
         }
-        Collections.sort(events, (e1, e2) -> Long.compare(e1.getStartTime(), e2.getStartTime()));
         cursor.close();
         return events;
     }

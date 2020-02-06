@@ -53,7 +53,7 @@ public class AppSettings {
         historySetting = HistorySettingType.fromName(section.getString("history-type"));
         if(historySetting == null) historySetting = HistorySettingType.FOUR_WEEKS;
         lastDeletionTime = section.contains("last-deletion-time") ? section.getLong("last-deletion-time") : -1;
-        developer = section.contains("developer") ? section.getBoolean("developer") : false;
+        developer = section.contains("developer") && section.getBoolean("developer");
     }
 
     private File getFile() {

@@ -6,7 +6,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
